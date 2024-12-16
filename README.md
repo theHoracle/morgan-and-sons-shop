@@ -5,4 +5,4 @@ blank
 ## Attributes
 
 - **Database**: mongodb
-- **Storage Adapter**: localDisk
+- **Storage Adapter**: S3
