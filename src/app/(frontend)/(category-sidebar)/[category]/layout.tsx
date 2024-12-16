@@ -11,7 +11,7 @@ export async function generateMetadata({
     const { category: categoryParams } = await params
     const urlDecoded = decodeURIComponent(categoryParams)
     const { docs: categories } = await payload.find({
-        collection: 'category',
+        collection: 'categories',
         where: {
             slug: {
                 equals: urlDecoded
@@ -23,10 +23,10 @@ export async function generateMetadata({
          return notFound()
     }
 
-    const productExample = category.products?.slice(0,3)
+    const productExample = category.products?.docs?.slice(0,3)
                             .map((product) => (typeof product !== 'number') ? product.title : 'product' )
                             .join(', ')
-    const catLen = category.products?.length || 0
+    const catLen = category.products?.docs?.length || 0
 
     return {
         title: category.name,

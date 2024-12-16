@@ -4,7 +4,7 @@ import { notFound } from "next/navigation"
 
 export async function generateStaticParams() {
     const { docs: categories } = await payload.find({
-        collection: 'category'
+        collection: 'categories'
     })
     if(!categories) {
         return []
@@ -22,7 +22,7 @@ const Categories = async (props: {
     const { category } = await props.params
     const urlDecoded = decodeURIComponent(category)
     const { docs: categories } = await payload.find({
-        collection: 'category',
+        collection: 'categories',
         where: {
             slug: {
                 equals: urlDecoded
@@ -33,7 +33,7 @@ const Categories = async (props: {
     if(!cat) {
         return notFound()
     }
-    const amount = cat.products?.length || 0
+    const amount = cat.products?.docs?.length || 0
 
     return (
         <div>
@@ -42,7 +42,7 @@ const Categories = async (props: {
             <hr className='mt-1 w-full stroke-neutral-700' />
             
             <div className='flex flex-row flex-wrap justify-center gap-2'>
-            {cat.products?.filter(product => typeof product !== 'number').map((product) => (
+            {cat.products?.docs?.filter(product => typeof product !== 'number').map((product) => (
                     <ProductCard product={product} key={product.id} />
             ))}
             </div>

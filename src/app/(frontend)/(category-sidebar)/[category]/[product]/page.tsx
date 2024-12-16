@@ -1,3 +1,4 @@
+import ProductPage from "@/components/products-page";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { payload } from "@/payload";
 import { Metadata } from "next";
@@ -23,7 +24,7 @@ export async function generateMetadata(props: {
     }
 }
 
-const ProductPage = async (props: {
+const ProductPageWrapper = async (props: {
     params: Promise<{
       product: string;
     }>;
@@ -44,31 +45,9 @@ const ProductPage = async (props: {
 
     return (
         <div>
-            <h1>Product {product.title}</h1>
-            <p>Product page</p>
-            <div>
-                <Card
-                className="flex flex-col md:flex-row gap-4 "
-                >
-                    <div>
-                        {/* image component */}
-                    </div>
-                    <div>
-                        <h2>{product.title}</h2>
-                        <p>{product.description}</p>
-                    </div>
-                </Card>
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Card</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        
-                    </CardContent>
-                </Card>
-            </div>
+            <ProductPage product={product} />
         </div>
     )
 }
 
-export default ProductPage;
+export default ProductPageWrapper;
