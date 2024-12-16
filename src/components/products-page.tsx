@@ -28,7 +28,7 @@ const ProductPage = (props: { product: Product }) => {
           {/* Image Gallery */}
           <div className="space-y-4">
             {/* Desktop Gallery */}
-            <div className="hidden lg:block">
+            <div className="hidden lg:block h-screen">
               <div className="relative aspect-square overflow-hidden rounded-2xl shadow-lg">
                 <Image
                   src={images[selectedImage].url}

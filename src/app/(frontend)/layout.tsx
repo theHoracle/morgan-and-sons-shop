@@ -5,12 +5,19 @@ import {
 } from "@/components/ui/sidebar"
 import { Geist } from 'next/font/google'
 
+const { NEXT_PUBLIC_URL } = process.env
 export const metadata: Metadata = {
     title: {
         template: "%s | Morgan and Sons",
         default: "Morgan and Sons"
     },
+    openGraph: {
+        description: "Morgan and Sons supplies store!",
+        url: NEXT_PUBLIC_URL!,
+        siteName: "Morgan and Sons",
+    },
 }
+
 
 const geist = Geist({
     subsets: ['latin'],

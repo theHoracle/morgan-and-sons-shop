@@ -27,12 +27,13 @@ export async function generateMetadata({
                             .map((product) => (typeof product !== 'number') ? product.title : 'product' )
                             .join(', ')
     const catLen = category.products?.docs?.length || 0
-
+    const desc = `Choose from our selection of ${category.name.toLowerCase()}, including ${productExample + (catLen > 1 ? "," : "")} and more. Fully ready to ship.`
     return {
         title: category.name,
+        description: desc,
         openGraph: {
             title: category.name,
-            description: `Choose from our selection of ${category.name.toLowerCase()}, including ${productExample + (catLen > 1 ? "," : "")} and more. Fully ready to ship.`,
+            description: desc,
         },
     }
 }

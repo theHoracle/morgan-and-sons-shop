@@ -1,5 +1,4 @@
 import ProductPage from "@/components/products-page";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { payload } from "@/payload";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -17,6 +16,8 @@ export async function generateMetadata(props: {
     if (!product) return notFound()
 
     return {
+        title: product.title,
+        description: product.description,
         openGraph: {
             title: product.title,
             description: product.description,
