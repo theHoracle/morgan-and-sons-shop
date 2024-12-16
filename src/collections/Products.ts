@@ -63,7 +63,7 @@ export const Products: CollectionConfig = {
         {
             name: 'category',
             type: 'relationship',
-            relationTo: 'category',
+            relationTo: 'categories',
             required: true,
             hasMany: false,
         },

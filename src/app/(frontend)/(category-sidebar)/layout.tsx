@@ -23,8 +23,8 @@ export default async function Layout({
     children: React.ReactNode;
   }) {
     const { docs: menus } = await payload.find({
-      collection: 'menu',
-      depth: 2
+      collection: 'menus',
+      depth: 1
     })
     
     return (

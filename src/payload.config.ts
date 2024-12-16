@@ -10,8 +10,8 @@ import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
-import { Menu } from './collections/menu/Menu'
-import { Category } from './collections/menu/Category'
+import { Menus } from './collections/menu/Menus'
+import { Categories } from './collections/menu/Categories'
 import { Products } from './collections/Products'
 
 
@@ -25,7 +25,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Menu, Category, Products],
+  collections: [Users, Media, Menus, Categories, Products],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

@@ -1,8 +1,8 @@
 import { slugify } from "@/lib/helpers";
 import { CollectionConfig } from "payload";
 
-export const Category: CollectionConfig = {
-  slug: "category",
+export const Categories: CollectionConfig = {
+  slug: "categories",
   admin: {
     useAsTitle: "name",
   },
@@ -26,26 +26,14 @@ export const Category: CollectionConfig = {
     },
     {
       name: "products",
-      type: "relationship",
-      relationTo: "products",
-      hasMany: true,
-    },
-    {
-      name: "relatedProducts",
       type: "join",
       collection: "products",
       on: "category",
     },
     {
-      name: "relatedCategories",
-      type: "join",
-      collection: "category",
-      on: "menu",
-    },
-    {
       name: "menu",
       type: "relationship",
-      relationTo: "menu",
+      relationTo: "menus",
       hasMany: false,
       required: true,
     },

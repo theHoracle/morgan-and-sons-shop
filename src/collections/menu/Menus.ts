@@ -1,7 +1,7 @@
 import { CollectionConfig } from "payload";
 
-export const Menu: CollectionConfig = {
-  slug: "menu",
+export const Menus: CollectionConfig = {
+  slug: "menus",
   admin: {
     useAsTitle: "title",
   },
@@ -15,10 +15,11 @@ export const Menu: CollectionConfig = {
       required: true,
     },
     {
-      name: "categories",
-      type: "relationship",
-      relationTo: "category",
-      hasMany: true,
+        name: "categories",
+        type: "join",
+        collection: "categories",
+        on: "menu",
     },
+    
   ],
 };

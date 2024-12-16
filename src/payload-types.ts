@@ -13,24 +13,26 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
-    menu: Menu;
-    category: Category;
+    menus: Menu;
+    categories: Category;
     products: Product;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
   collectionsJoins: {
-    category: {
-      relatedProducts: 'products';
-      relatedCategories: 'category';
+    menus: {
+      categories: 'categories';
+    };
+    categories: {
+      products: 'products';
     };
   };
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
-    menu: MenuSelect<false> | MenuSelect<true>;
-    category: CategorySelect<false> | CategorySelect<true>;
+    menus: MenusSelect<false> | MenusSelect<true>;
+    categories: CategoriesSelect<false> | CategoriesSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -134,30 +136,28 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "menu".
+ * via the `definition` "menus".
  */
 export interface Menu {
   id: number;
   title: string;
-  categories?: (number | Category)[] | null;
+  categories?: {
+    docs?: (number | Category)[] | null;
+    hasNextPage?: boolean | null;
+  } | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "category".
+ * via the `definition` "categories".
  */
 export interface Category {
   id: number;
   name: string;
   slug: string;
-  products?: (number | Product)[] | null;
-  relatedProducts?: {
+  products?: {
     docs?: (number | Product)[] | null;
-    hasNextPage?: boolean | null;
-  } | null;
-  relatedCategories?: {
-    docs?: (number | Category)[] | null;
     hasNextPage?: boolean | null;
   } | null;
   menu: number | Menu;
@@ -210,11 +210,11 @@ export interface PayloadLockedDocument {
         value: number | Media;
       } | null)
     | ({
-        relationTo: 'menu';
+        relationTo: 'menus';
         value: number | Menu;
       } | null)
     | ({
-        relationTo: 'category';
+        relationTo: 'categories';
         value: number | Category;
       } | null)
     | ({
@@ -334,9 +334,9 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "menu_select".
+ * via the `definition` "menus_select".
  */
-export interface MenuSelect<T extends boolean = true> {
+export interface MenusSelect<T extends boolean = true> {
   title?: T;
   categories?: T;
   updatedAt?: T;
@@ -344,14 +344,12 @@ export interface MenuSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "category_select".
+ * via the `definition` "categories_select".
  */
-export interface CategorySelect<T extends boolean = true> {
+export interface CategoriesSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
   products?: T;
-  relatedProducts?: T;
-  relatedCategories?: T;
   menu?: T;
   updatedAt?: T;
   createdAt?: T;

@@ -21,72 +21,6 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { Menu } from "@/payload-types"
-import { Category } from "@/collections/menu/Category"
-
-// This is sample data.
-const data = {
-  navMain: [
-    {
-      title: "Getting Started",
-      url: "#",
-      items: [
-        {
-          title: "Installation",
-          url: "#",
-        },
-        {
-          title: "Project Structure",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Building Your Application",
-      url: "#",
-      items: [
-        {
-          title: "Routing",
-          url: "#",
-        },
-        {
-          title: "Data Fetching",
-          url: "#",
-          isActive: true,
-        },
-      ],
-    },
-    {
-      title: "API Reference",
-      url: "#",
-      items: [
-        {
-          title: "Components",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Architecture",
-      url: "#",
-      items: [
-        {
-          title: "Accessibility",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Community",
-      url: "#",
-      items: [
-        {
-          title: "Contribution Guide",
-          url: "#",
-        },
-      ],
-    },
-  ],
-}
 interface AppSidebarProps {
   menus:Menu[],
 }
@@ -125,16 +59,16 @@ export function AppSidebar({
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton>
-                      {menu.title}{" "}
+                      <span className="truncate">{menu.title}</span>{" "}
                       <Plus className="ml-auto group-data-[state=open]/collapsible:hidden" />
                       <Minus className="ml-auto group-data-[state=closed]/collapsible:hidden" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
-                  {menu.categories?.length ? (
+                  {Array.isArray(menu.categories) && menu.categories?.length ? (
                     <CollapsibleContent>
                       <SidebarMenuSub>
                       {Array.isArray(menu.categories) && 
-                         menu.categories.filter((category) => typeof category !== 'number'  )
+                         menu.categories?.docs?.filter((category) => typeof category !== 'number'  )
                          .map((category) => (
                           <SidebarMenuSubItem key={category.name}>
                             <SidebarMenuSubButton
