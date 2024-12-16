@@ -90,11 +90,11 @@ const ProductPage = (props: { product: Product }) => {
 
             <div className="flex items-center space-x-4">
               <span className="text-3xl font-bold text-primary">
-                ${selectedVariant?.price || product.price}
+              ₦{selectedVariant?.price || product.price}
               </span>
-              {product.priceRange[0]?.min && product.priceRange[0]?.max && (
+              {(product.priceRange[0]?.min && product.priceRange[0]?.max) && (product.priceRange[0].min !== product.priceRange[0].max) && (
                 <span className="text-lg text-gray-500">
-                  ${product.priceRange[0].min} - ${product.priceRange[0].max}
+                  ₦{product.priceRange[0].min} - ${product.priceRange[0].max}
                 </span>
               )}
             </div>
@@ -113,7 +113,7 @@ const ProductPage = (props: { product: Product }) => {
                       <SelectItem key={variant.id} value={variant.id || ''}>
                         {variant.size && `Size: ${variant.size}`}
                         {variant.color && ` - Color: ${variant.color}`}
-                        {variant.price && ` - $${variant.price}`}
+                        {variant.price && ` - ₦${variant.price}`}
                       </SelectItem>
                     ))}
                   </SelectContent>

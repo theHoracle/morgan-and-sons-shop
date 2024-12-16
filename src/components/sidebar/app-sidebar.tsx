@@ -1,6 +1,6 @@
+"use client"
 import * as React from "react"
 import { GalleryVerticalEnd, Minus, Plus } from "lucide-react"
-
 import { SearchForm } from "@/components/search-form"
 import {
   Collapsible,
@@ -21,6 +21,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { Menu } from "@/payload-types"
+import MenuSubItem from "./menu-subitem"
 interface AppSidebarProps {
   menus:Menu[],
 }
@@ -38,8 +39,8 @@ export function AppSidebar({
                   <GalleryVerticalEnd className="size-4" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">Documentation</span>
-                  <span className="">v1.0.0</span>
+                  <span className="font-semibold">Morgan and Sons</span>
+                  <span className="text-sm">supply store</span>
                 </div>
               </a>
             </SidebarMenuButton>
@@ -67,17 +68,13 @@ export function AppSidebar({
                   {Array.isArray(menu.categories) && menu.categories?.length ? (
                     <CollapsibleContent>
                       <SidebarMenuSub>
-                      {Array.isArray(menu.categories) && 
-                         menu.categories?.docs?.filter((category) => typeof category !== 'number'  )
+                      {Array.isArray(menu.categories.docs) && 
+                         menu.categories.docs?.filter((category) => typeof category !== 'number'  )
                          .map((category) => (
-                          <SidebarMenuSubItem key={category.name}>
-                            <SidebarMenuSubButton
-                              asChild
-                              isActive={false} // TODO: 
-                            >
-                              <a href={category.slug}>{category.name}</a>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
+                            <MenuSubItem key={category.id}
+                              categoryName={category.name}  
+                              categorySlug={category.slug}
+                            />
                         ))}
                       </SidebarMenuSub>
                     </CollapsibleContent>

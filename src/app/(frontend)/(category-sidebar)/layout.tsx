@@ -1,4 +1,4 @@
-import { AppSidebar } from "@/components/app-sidebar"
+import { AppSidebar } from "@/components/sidebar/app-sidebar"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -13,8 +13,6 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { ShoppingCart } from "lucide-react";
-import { getPayload } from 'payload'
-import config from '@payload-config'
 import { payload } from "@/payload";
 
 export default async function Layout({
