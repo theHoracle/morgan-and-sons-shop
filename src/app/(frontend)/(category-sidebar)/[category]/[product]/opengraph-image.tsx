@@ -2,8 +2,6 @@ import { ImageResponse } from 'next/og'
 import { payload } from "@/payload"
 import { notFound } from "next/navigation"
 
-// runtime config
-export const runtime = "edge";
 
 // Image metadata
 export const alt = "About the product";
