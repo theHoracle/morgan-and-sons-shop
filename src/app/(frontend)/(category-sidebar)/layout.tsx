@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/sidebar"
 import { ShoppingCart } from "lucide-react";
 import { payload } from "@/payload";
+import { CartButton } from "@/components/cart";
 
 export default async function Layout({
     children,
@@ -48,7 +49,7 @@ export default async function Layout({
             </Breadcrumb>
             </div>
             <div className="flex items-center gap-2">
-              <ShoppingCart />
+              <CartButton />
             </div>
             </header>
             <div className="flex flex-1 flex-col p-4">

@@ -16,6 +16,8 @@ export interface Config {
     menus: Menu;
     categories: Category;
     products: Product;
+    orders: Order;
+    'users-cart': UsersCart;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -34,6 +36,8 @@ export interface Config {
     menus: MenusSelect<false> | MenusSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
+    orders: OrdersSelect<false> | OrdersSelect<true>;
+    'users-cart': UsersCartSelect<false> | UsersCartSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -196,6 +200,50 @@ export interface Product {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders".
+ */
+export interface Order {
+  id: number;
+  user: number | User;
+  items: {
+    product: number | Product;
+    variant: {
+      price: number;
+      size?: string | null;
+      color?: string | null;
+    };
+    quantity: number;
+    id?: string | null;
+  }[];
+  total: number;
+  status: 'pending' | 'shipped' | 'delivered';
+  paymentId?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users-cart".
+ */
+export interface UsersCart {
+  id: number;
+  user: number | User;
+  total: number;
+  items: {
+    product: number | Product;
+    variant: {
+      price: number;
+      size?: string | null;
+      color?: string | null;
+    };
+    quantity: number;
+    id?: string | null;
+  }[];
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -220,6 +268,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'products';
         value: number | Product;
+      } | null)
+    | ({
+        relationTo: 'orders';
+        value: number | Order;
+      } | null)
+    | ({
+        relationTo: 'users-cart';
+        value: number | UsersCart;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -382,6 +438,56 @@ export interface ProductsSelect<T extends boolean = true> {
         id?: T;
       };
   image?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders_select".
+ */
+export interface OrdersSelect<T extends boolean = true> {
+  user?: T;
+  items?:
+    | T
+    | {
+        product?: T;
+        variant?:
+          | T
+          | {
+              price?: T;
+              size?: T;
+              color?: T;
+            };
+        quantity?: T;
+        id?: T;
+      };
+  total?: T;
+  status?: T;
+  paymentId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users-cart_select".
+ */
+export interface UsersCartSelect<T extends boolean = true> {
+  user?: T;
+  total?: T;
+  items?:
+    | T
+    | {
+        product?: T;
+        variant?:
+          | T
+          | {
+              price?: T;
+              size?: T;
+              color?: T;
+            };
+        quantity?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

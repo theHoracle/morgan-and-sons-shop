@@ -4,6 +4,7 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import { Geist } from 'next/font/google'
+import ClientProviders from '@/components/providers/ClientProviders';
 
 const { NEXT_PUBLIC_URL } = process.env
 export const metadata: Metadata = {
@@ -29,10 +30,9 @@ export default function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
         <body className={`${geist.className} antialiased`}>
-            <SidebarProvider>
-                
+            <ClientProviders>
               {children}
-          </SidebarProvider>
+            </ClientProviders>
         </body>
         </html>
     )

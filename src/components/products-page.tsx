@@ -14,8 +14,32 @@ const ProductPage = (props: { product: Product }) => {
   const [selectedVariant, setSelectedVariant] = useState(product.variants?.[0] || null)
   const [quantity, setQuantity] = useState(1)
   const [selectedImage, setSelectedImage] = useState(0)
+  const [selectedSize, setSelectedSize] = useState<string | null>(product.variants?.[0]?.size || null)
+  const [selectedColor, setSelectedColor] = useState<string | null>(product.variants?.[0]?.color || null)
 
   const images = Array.isArray(product.image) ? product.image : [product.image]
+
+  // Get unique sizes and colors from variants
+  const sizes = Array.from(new Set(product.variants?.map(v => v.size) || []))
+  const colors = Array.from(new Set(product.variants?.map(v => v.color) || []))
+
+  // Update selected variant when size or color changes
+  const updateSelectedVariant = (size: string | null, color: string | null) => {
+    const variant = product.variants?.find(
+      v => v.size === size && v.color === color
+    ) || null
+    setSelectedVariant(variant)
+  }
+
+  const handleSizeChange = (size: string) => {
+    setSelectedSize(size)
+    updateSelectedVariant(size, selectedColor)
+  }
+
+  const handleColorChange = (color: string) => {
+    setSelectedColor(color)
+    updateSelectedVariant(selectedSize, color)
+  }
 
   const handleAddToCart = () => {
     console.log('Added to cart:', { product, variant: selectedVariant, quantity })
@@ -28,7 +52,7 @@ const ProductPage = (props: { product: Product }) => {
           {/* Image Gallery */}
           <div className="space-y-4">
             {/* Desktop Gallery */}
-            <div className="hidden lg:block h-screen">
+            <div className="hidden lg:block">
               <div className="relative aspect-square overflow-hidden rounded-2xl shadow-lg">
                 <Image
                   src={images[selectedImage].url}
@@ -90,36 +114,61 @@ const ProductPage = (props: { product: Product }) => {
 
             <div className="flex items-center space-x-4">
               <span className="text-3xl font-bold text-primary">
-              ₦{selectedVariant?.price || product.price}
+                ${selectedVariant?.price || product.price}
               </span>
-              {(product.priceRange[0]?.min && product.priceRange[0]?.max) && (product.priceRange[0].min !== product.priceRange[0].max) && (
+              {product.priceRange[0]?.min && product.priceRange[0]?.max && (
                 <span className="text-lg text-gray-500">
-                  ₦{product.priceRange[0].min} - ${product.priceRange[0].max}
+                  ${product.priceRange[0].min} - ${product.priceRange[0].max}
                 </span>
               )}
             </div>
 
-            {product.variants && (
-              <div className="space-y-4">
-                <label className="block text-sm font-medium text-gray-700">Select Variant</label>
-                <Select
-                  onValueChange={(value) => setSelectedVariant(product.variants?.find(v => v.id === value) || null)}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select variant" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {product.variants.map((variant) => (
-                      <SelectItem key={variant.id} value={variant.id || ''}>
-                        {variant.size && `Size: ${variant.size}`}
-                        {variant.color && ` - Color: ${variant.color}`}
-                        {variant.price && ` - ₦${variant.price}`}
-                      </SelectItem>
+            {/* Variant Selection */}
+            <div className="space-y-6">
+              {/* Size Selection */}
+              {sizes.length > 0 && (
+                <div className="space-y-4">
+                  <label className="block text-sm font-medium text-gray-700">Size</label>
+                  <div className="flex flex-wrap gap-3">
+                    {sizes.map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => size && handleSizeChange(size)}
+                        className={`px-4 py-2 rounded-md border-2 transition-all duration-200 ${
+                          selectedSize === size
+                            ? 'border-primary bg-primary text-white'
+                            : 'border-gray-200 hover:border-primary'
+                        }`}
+                      >
+                        {size}
+                      </button>
                     ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
+                  </div>
+                </div>
+              )}
+
+              {/* Color Selection */}
+              {colors.length > 0 && (
+                <div className="space-y-4">
+                  <label className="block text-sm font-medium text-gray-700">Color</label>
+                  <div className="flex flex-wrap gap-3">
+                    {colors.map((color) => (
+                      <button
+                        key={color}
+                        onClick={() => color && handleColorChange(color)}
+                        className={`px-4 py-2 rounded-md border-2 transition-all duration-200 ${
+                          selectedColor === color
+                            ? 'border-primary bg-primary text-white'
+                            : 'border-gray-200 hover:border-primary'
+                        }`}
+                      >
+                        {color}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
 
             <div className="space-y-4">
               <label className="block text-sm font-medium text-gray-700">Quantity</label>
@@ -142,7 +191,11 @@ const ProductPage = (props: { product: Product }) => {
               </div>
             </div>
 
-            <Button className="w-full text-lg py-6" onClick={handleAddToCart}>
+            <Button 
+              className="w-full text-lg py-6" 
+              onClick={handleAddToCart}
+              disabled={!selectedSize || !selectedColor}
+            >
               <ShoppingCart className="mr-2 h-5 w-5" /> Add to Cart
             </Button>
 
@@ -153,9 +206,9 @@ const ProductPage = (props: { product: Product }) => {
                   <li>
                     <span className="font-medium">Category:</span> {typeof product.category === 'number' ? `Category ${product.category}` : product.category.name}
                   </li>
-                  {product.inventoryQuantity && (
+                  {selectedVariant?.inventoryQuantity && (
                     <li>
-                      <span className="font-medium">In Stock:</span> {product.inventoryQuantity}
+                      <span className="font-medium">In Stock:</span> {selectedVariant.inventoryQuantity}
                     </li>
                   )}
                   <li>
