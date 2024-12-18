@@ -29,7 +29,7 @@ const Page = async () => {
                         <Skeleton className='rounded-lg py-1' />
                     </div>
                 }>
-                {category.id && <CategoryCarousel categoryId={category.slug} />}
+                {category.id && <CategoryCarousel categoryId={category.id} />}
                 </Suspense>
             </div>
         ))}

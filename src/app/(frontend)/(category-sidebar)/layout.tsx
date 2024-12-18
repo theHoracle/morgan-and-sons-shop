@@ -12,7 +12,6 @@ import {
   SidebarInset,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { ShoppingCart } from "lucide-react";
 import { payload } from "@/payload";
 import { CartButton } from "@/components/cart";
 
@@ -25,7 +24,7 @@ export default async function Layout({
       collection: 'menus',
       depth: 1
     })
-    console.dir("menus: ", menus)
+    console.log("menus: ", menus)
     return (
         <>
         <AppSidebar menus={menus} />
@@ -38,12 +37,12 @@ export default async function Layout({
                 <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
                     <BreadcrumbLink href="#">
-                      Indetifications
+                      Category
                     </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                    <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                    <BreadcrumbPage>Product</BreadcrumbPage>
                 </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>

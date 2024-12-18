@@ -71,14 +71,16 @@ export function AppSidebar({
                     <CollapsibleContent>
                       <SidebarMenuSub>
                       {Array.isArray(menu.categories.docs) && 
-                         menu.categories.docs?.filter((category) => typeof category !== 'number'  )
+                         menu.categories.docs?.filter((category) => typeof category !== 'number')
                          .map((category) => (
                           <SidebarMenuSubItem key={category.id}>
                               <SidebarMenuSubButton
                                 asChild
                                 isActive={pathname.includes(category.slug)} 
                               >
-                                <a href={category.slug}>{category.name}</a>
+                                <a href={category.slug}
+                                className="truncate"
+                                >{category.name}</a>
                               </SidebarMenuSubButton>
                             </SidebarMenuSubItem>
                          ))}
