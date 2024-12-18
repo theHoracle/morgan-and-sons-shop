@@ -1,14 +1,16 @@
 import { payload } from '@/payload'
 import CategoryCarousel from '@/components/category-carousel'
+import { Suspense } from 'react'
+import { Skeleton } from '@/components/ui/skeleton'
 
 const Page = async ( ) => {
     const { docs: categories } = await payload.find({
         collection: 'categories', 
         depth: 0, 
      })
-    console.dir(categories, { depth: null })
+
     return <div className="space-y-4">
-        {categories.map((category) => (
+        {categories?.map((category) => (
             <div 
             key={category.id}
             className=''
@@ -18,7 +20,16 @@ const Page = async ( ) => {
                 >{category.name}</h2>
                 <hr className='w-full mb-4 stroke-neutral-700' />
                 {/* display products in category */}
-                <CategoryCarousel categoryId={category.id} />
+                <Suspense fallback={
+                    <div className='grid grid-cols-4 gap-2 w-full'>
+                        <Skeleton className='rounded-lg py-1' />
+                        <Skeleton className='rounded-lg py-1' />
+                        <Skeleton className='rounded-lg py-1' />
+                        <Skeleton className='rounded-lg py-1' />
+                    </div>
+                }>
+                <CategoryCarousel categoryId={category.id!} />
+                </Suspense>
             </div>
         ))}
         

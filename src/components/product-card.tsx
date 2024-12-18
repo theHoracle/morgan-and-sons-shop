@@ -1,7 +1,4 @@
-"use client"
-
 import Image from 'next/image'
-import { Button } from "@/components/ui/button"
 import Link from 'next/link'
 import { Product } from '@/payload-types'
 
@@ -19,9 +16,6 @@ export function ProductCard({ product }: ProductCardProps) {
   const [price] = priceRange
   const formattedPrice = price.min === price.max ? `N ${price.max}` : `N ${price.min} - N ${price.max}`
 
-  const onAddToCart = () => {
-    // Add to cart logic here
-  }
   const categorySlug = typeof category !== 'number' ? category.slug : '/products'
   return (
     <Link 
