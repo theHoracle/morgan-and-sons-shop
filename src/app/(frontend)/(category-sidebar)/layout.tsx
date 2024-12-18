@@ -25,7 +25,7 @@ export default async function Layout({
       collection: 'menus',
       depth: 1
     })
-    
+    console.dir("menus: ", menus)
     return (
         <>
         <AppSidebar menus={menus} />

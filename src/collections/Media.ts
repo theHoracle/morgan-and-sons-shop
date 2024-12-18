@@ -40,16 +40,6 @@ export const Media: CollectionConfig = {
 
   fields: [
     {
-      name: "user",
-      type: "relationship",
-      relationTo: "users",
-      hasMany: false,
-      required: true,
-      admin: {
-        condition: () => false,
-      },
-    },
-    {
       name: 'alt',
       type: 'text',
     },

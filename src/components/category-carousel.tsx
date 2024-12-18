@@ -9,8 +9,8 @@ const CategoryCarousel = async (props: {
         collection: 'products',
         where: {
             category: {
-                equals: categoryId
-            }
+
+            } 
         },
         select: {
             title: true,
@@ -22,7 +22,8 @@ const CategoryCarousel = async (props: {
         depth: 1,
         limit: 5
     })
-    return <div className='flex flex-row flex-wrap items-center gap-2 py-1'>
+    console.log("Products: ", products)
+    return <div className='grid grid-cols-2 md:flex flex-row flex-wrap md:items-center gap-2 py-1'>
         {products.map((product) => (
             <ProductCard
              product={product} 

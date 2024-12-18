@@ -3,12 +3,13 @@ import CategoryCarousel from '@/components/category-carousel'
 import { Suspense } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
 
-const Page = async ( ) => {
+const Page = async () => {
     const { docs: categories } = await payload.find({
         collection: 'categories', 
         depth: 0, 
      })
 
+     console.dir("Categories: ", categories)
     return <div className="space-y-4">
         {categories?.map((category) => (
             <div 
@@ -28,7 +29,7 @@ const Page = async ( ) => {
                         <Skeleton className='rounded-lg py-1' />
                     </div>
                 }>
-                <CategoryCarousel categoryId={category.id!} />
+                {category.id && <CategoryCarousel categoryId={category.slug} />}
                 </Suspense>
             </div>
         ))}

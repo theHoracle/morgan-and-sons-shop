@@ -1,3 +1,4 @@
+"use client"
 import { SidebarProvider } from "../ui/sidebar"
 import QueryProvider from "./QueryProvider"
 

@@ -9,7 +9,7 @@ export const getCart = async () => {
         limit: 1
     })
     const [usersCart] = cart
-    return usersCart;
+    return usersCart
 }
 
 type AddItem = {
@@ -71,7 +71,7 @@ export const removeItem = async (props: {
     itemId: string,
     removeCompletely?: boolean
 }) => {
-    const { itemId, previousData, removeCompletely = false } = props
+    const { itemId, previousData, removeCompletely } = props
     
     const existingItems = previousData.items ?? [];
 

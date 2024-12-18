@@ -98,7 +98,6 @@ export interface User {
  */
 export interface Media {
   id: number;
-  user?: (number | null) | User;
   alt?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -205,19 +204,10 @@ export interface Product {
 export interface Order {
   id: number;
   user: number | User;
-  items: {
-    product: number | Product;
-    variant: {
-      price: number;
-      size?: string | null;
-      color?: string | null;
-    };
-    quantity: number;
-    id?: string | null;
-  }[];
-  total: number;
+  order: number | UsersCart;
   status: 'pending' | 'shipped' | 'delivered';
   paymentId?: string | null;
+  paymentStatus: 'pending' | 'paid';
   updatedAt: string;
   createdAt: string;
 }
@@ -340,7 +330,6 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
-  user?: T;
   alt?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -447,23 +436,10 @@ export interface ProductsSelect<T extends boolean = true> {
  */
 export interface OrdersSelect<T extends boolean = true> {
   user?: T;
-  items?:
-    | T
-    | {
-        product?: T;
-        variant?:
-          | T
-          | {
-              price?: T;
-              size?: T;
-              color?: T;
-            };
-        quantity?: T;
-        id?: T;
-      };
-  total?: T;
+  order?: T;
   status?: T;
   paymentId?: T;
+  paymentStatus?: T;
   updatedAt?: T;
   createdAt?: T;
 }

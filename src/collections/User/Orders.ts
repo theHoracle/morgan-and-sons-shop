@@ -2,7 +2,7 @@ import { Access, CollectionConfig } from "payload";
 
 const isAdminOrOwner: Access = ({ req, data })  => {
     if(req?.user?.role === 'admin') return true
-    if(req?.user?.id === data.user) return true
+    if(req?.user?.id === data?.user) return true
     return false
     
 }
@@ -19,50 +19,15 @@ export const Orders: CollectionConfig = {
             relationTo: 'users',
             required: true
         },
-        {
-            name: 'items',
-            type: 'array',
-            label: 'Cart items',
-            fields: [
-                {
-                    name: 'product',
-                    type: 'relationship',
-                    relationTo: 'products',
-                    required: true,
-                },
-                {
-                    name: 'variant',
-                    type: 'group',
-                    fields: [
-                        {
-                            name: 'price',
-                            type: 'number',
-                            required: true,
-                        },
-                        {
-                            name: 'size',
-                            type: 'text',
-                        },
-                        {
-                            name: 'color',
-                            type: 'text',
-                        },
-                    ],
-                },
-                {
-                    name: 'quantity',
-                    type: 'number',
-                    required: true,
-                    defaultValue: 1
-                },
-            ],
+        {   
+            name: 'order',
+            type: 'relationship',
+            relationTo: 'users-cart',
             required: true,
-            defaultValue: []
-        },
-        {
-            name: 'total',
-            type: 'number',
-            required: true
+            hasMany: false,
+            access: {
+                update: () => false  
+            },
         },
         {
             name: 'status',
@@ -87,6 +52,25 @@ export const Orders: CollectionConfig = {
         {
             name: 'paymentId',
             type: 'text',
+        },
+        {
+            name: 'paymentStatus',
+            type: 'select',
+            options: [
+                {
+                    label: 'Pending',
+                    value: 'pending'
+                },
+                {
+                    label: 'Paid',
+                    value: 'paid'
+                }
+            ],
+            defaultValue: 'pending',
+            required: true,
+            access: {
+                update: () => false
+            }
         }
     ]
  }

@@ -21,13 +21,15 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { Menu } from "@/payload-types"
-import MenuSubItem from "./menu-subitem"
+import { usePathname } from "next/navigation"
+
 interface AppSidebarProps {
   menus:Menu[],
 }
 export function AppSidebar({ 
   menus, ...props 
 }: AppSidebarProps & React.ComponentProps<typeof Sidebar>) {
+  const pathname = usePathname()
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -71,11 +73,15 @@ export function AppSidebar({
                       {Array.isArray(menu.categories.docs) && 
                          menu.categories.docs?.filter((category) => typeof category !== 'number'  )
                          .map((category) => (
-                            <MenuSubItem key={category.id}
-                              categoryName={category.name}  
-                              categorySlug={category.slug}
-                            />
-                        ))}
+                          <SidebarMenuSubItem key={category.id}>
+                              <SidebarMenuSubButton
+                                asChild
+                                isActive={pathname.includes(category.slug)} 
+                              >
+                                <a href={category.slug}>{category.name}</a>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                         ))}
                       </SidebarMenuSub>
                     </CollapsibleContent>
                   ) : null}

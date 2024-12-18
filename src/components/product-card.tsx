@@ -21,7 +21,7 @@ export function ProductCard({ product }: ProductCardProps) {
     <Link 
     href={`/${categorySlug}/${slug}`}
     className="bg-stone-100 hover:bg-stone-200 rounded-lg overflow-hidden max-w-56 flex flex-col">
-      <div className="relative w-56 aspect-square">
+      <div className="relative max-w-56 aspect-square">
         <Image
           src={imageUrl}
           alt={`${title} image`}

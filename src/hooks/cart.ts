@@ -1,4 +1,4 @@
-import { addItem, getCart, removeItem } from "@/app/(frontend)/cart/action"
+import { addItem, getCart, removeItem } from "@/app/(frontend)/(cart)/action"
 import { useMutation, useQuery } from "@tanstack/react-query"
 
 export const useGetCart = () => {

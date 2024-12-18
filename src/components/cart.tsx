@@ -26,7 +26,7 @@ export function CartButton() {
   <Cart
       isOpen={isCartOpen}
       onClose={() => setIsCartOpen(false)}
-      cart={cart!}
+      cart={cart}
       />
   </div>
 }
@@ -34,7 +34,7 @@ export function CartButton() {
 interface CartProps {
   isOpen: boolean
   onClose: () => void
-  cart: UsersCart
+  cart: UsersCart | undefined
 }
 
 function Cart({ isOpen, onClose, cart }: CartProps) {
@@ -42,14 +42,14 @@ function Cart({ isOpen, onClose, cart }: CartProps) {
   const { mutate: onRemoveItem } = useRemoveItem()
     
   const [mounted, setMounted] = useState(false)
-  const { items } = cart
   useEffect(() => {
     setMounted(true)
   }, [])
-
-  if (!mounted) {
+  
+  if (!mounted || !cart) {
     return null
   }
+  const { items } = cart
 
   const total = items.reduce((sum, item) => sum + item.variant.price * item.quantity, 0)
 
