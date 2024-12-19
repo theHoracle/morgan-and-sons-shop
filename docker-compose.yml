@@ -11,8 +11,8 @@ services:
     working_dir: /home/node/app/
     command: sh -c "corepack enable && corepack prepare pnpm@latest --activate && pnpm install && pnpm dev"
     depends_on:
-      - mongo
-      # - postgres
+      # - mongo
+      - postgres
     env_file:
       - .env
 

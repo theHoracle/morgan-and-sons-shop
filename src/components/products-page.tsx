@@ -2,30 +2,31 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { ChevronLeft, ChevronRight, Minus, Plus, ShoppingCart } from 'lucide-react'
+import { Minus, Plus, ShoppingCart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Product } from '@/payload-types'
+import { AddToCart } from '@/components/cart/add-to-cart'
 
 const ProductPage = (props: { product: Product }) => {
   const { product } = props
-  const [selectedVariant, setSelectedVariant] = useState(product.variants?.[0] || null)
+  const [selectedVariant, setSelectedVariant] = useState(product.variantInventory?.[0] || null)
   const [quantity, setQuantity] = useState(1)
   const [selectedImage, setSelectedImage] = useState(0)
-  const [selectedSize, setSelectedSize] = useState<string | null>(product.variants?.[0]?.size || null)
-  const [selectedColor, setSelectedColor] = useState<string | null>(product.variants?.[0]?.color || null)
+  const [selectedSize, setSelectedSize] = useState<string | null>(product.variantInventory?.[0]?.size || null)
+  const [selectedColor, setSelectedColor] = useState<string | null>(product.variantInventory?.[0]?.color || null)
 
   const images = Array.isArray(product.image) ? product.image : [product.image]
 
   // Get unique sizes and colors from variants
-  const sizes = Array.from(new Set(product.variants?.map(v => v.size) || []))
-  const colors = Array.from(new Set(product.variants?.map(v => v.color) || []))
+  const sizes = Array.from(new Set(product.variantInventory?.map(v => v.size) || []))
+  const colors = Array.from(new Set(product.variantInventory?.map(v => v.color) || []))
 
   // Update selected variant when size or color changes
   const updateSelectedVariant = (size: string | null, color: string | null) => {
-    const variant = product.variants?.find(
+    const variant = product.variantInventory?.find(
       v => v.size === size && v.color === color
     ) || null
     setSelectedVariant(variant)
@@ -39,10 +40,6 @@ const ProductPage = (props: { product: Product }) => {
   const handleColorChange = (color: string) => {
     setSelectedColor(color)
     updateSelectedVariant(selectedSize, color)
-  }
-
-  const handleAddToCart = () => {
-    console.log('Added to cart:', { product, variant: selectedVariant, quantity })
   }
 
   return (
@@ -99,8 +96,16 @@ const ProductPage = (props: { product: Product }) => {
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
+                <div className="flex justify-center mt-2">
+                  {images.map((_, index) => (
+                    <div
+                      key={index}
+                      className={`h-2 w-2 rounded-full mx-1 ${
+                        selectedImage === index ? 'bg-primary' : 'bg-gray-300'
+                      }`}
+                    />
+                  ))}
+                </div>
               </Carousel>
             </div>
           </div>
@@ -116,9 +121,9 @@ const ProductPage = (props: { product: Product }) => {
               <span className="text-3xl font-bold text-primary">
                 ${selectedVariant?.price || product.price}
               </span>
-              {product.priceRange[0]?.min && product.priceRange[0]?.max && (
+              {product.priceRange?.min && product.priceRange?.max && (
                 <span className="text-lg text-gray-500">
-                  ${product.priceRange[0].min} - ${product.priceRange[0].max}
+                  ${product.priceRange.min} - ${product.priceRange.max}
                 </span>
               )}
             </div>
@@ -133,7 +138,7 @@ const ProductPage = (props: { product: Product }) => {
                     {sizes.map((size) => (
                       <button
                         key={size}
-                        onClick={() => size && handleSizeChange(size)}
+                        onClick={() => handleSizeChange(size ?? '')}
                         className={`px-4 py-2 rounded-md border-2 transition-all duration-200 ${
                           selectedSize === size
                             ? 'border-primary bg-primary text-white'
@@ -155,7 +160,7 @@ const ProductPage = (props: { product: Product }) => {
                     {colors.map((color) => (
                       <button
                         key={color}
-                        onClick={() => color && handleColorChange(color)}
+                        onClick={() => handleColorChange(color ?? '')}
                         className={`px-4 py-2 rounded-md border-2 transition-all duration-200 ${
                           selectedColor === color
                             ? 'border-primary bg-primary text-white'
@@ -191,32 +196,7 @@ const ProductPage = (props: { product: Product }) => {
               </div>
             </div>
 
-            <Button 
-              className="w-full text-lg py-6" 
-              onClick={handleAddToCart}
-              disabled={!selectedSize || !selectedColor}
-            >
-              <ShoppingCart className="mr-2 h-5 w-5" /> Add to Cart
-            </Button>
-
-            <Card className="bg-white shadow-md hover:shadow-lg transition-shadow duration-300">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-4">Product Details</h3>
-                <ul className="space-y-2 text-gray-600">
-                  <li>
-                    <span className="font-medium">Category:</span> {typeof product.category === 'number' ? `Category ${product.category}` : product.category.name}
-                  </li>
-                  {selectedVariant?.inventoryQuantity && (
-                    <li>
-                      <span className="font-medium">In Stock:</span> {selectedVariant.inventoryQuantity}
-                    </li>
-                  )}
-                  <li>
-                    <span className="font-medium">Last Updated:</span> {new Date(product.updatedAt).toLocaleDateString()}
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
+            <AddToCart product={product} selectedVariantId={selectedVariant?.id || ''} />
           </div>
         </div>
       </div>

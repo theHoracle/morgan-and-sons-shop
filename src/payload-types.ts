@@ -177,22 +177,43 @@ export interface Product {
   slug: string;
   description: string;
   price: number;
-  priceRange: {
+  priceRange?: {
     min?: number | null;
     max?: number | null;
-    id?: string | null;
-  }[];
-  inventoryQuantity?: number | null;
-  category: number | Category;
-  variants?:
+  };
+  inventoryQuantity: number;
+  attributes?: {
+    sizes?:
+      | {
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
+    colors?:
+      | {
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  pricingRules?:
     | {
-        price?: number | null;
         size?: string | null;
         color?: string | null;
-        inventoryQuantity?: number | null;
+        price: number;
         id?: string | null;
       }[]
     | null;
+  variantInventory?:
+    | {
+        id: string | null;
+        size?: string | null;
+        color?: string | null;
+        price?: number | null;
+        inventoryQuantity?: number | null;
+      }[]
+    | null;
+  category: number | Category;
   image: number | Media;
   updatedAt: string;
   createdAt: string;
@@ -218,17 +239,16 @@ export interface Order {
 export interface UsersCart {
   id: number;
   user: number | User;
-  total: number;
-  items: {
-    product: number | Product;
-    variant: {
-      price: number;
-      size?: string | null;
-      color?: string | null;
-    };
-    quantity: number;
-    id?: string | null;
-  }[];
+  items?:
+    | {
+        product: number | Product;
+        variantId: string;
+        quantity: number;
+        subTotal?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  total?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -413,19 +433,42 @@ export interface ProductsSelect<T extends boolean = true> {
     | {
         min?: T;
         max?: T;
-        id?: T;
       };
   inventoryQuantity?: T;
-  category?: T;
-  variants?:
+  attributes?:
     | T
     | {
-        price?: T;
+        sizes?:
+          | T
+          | {
+              value?: T;
+              id?: T;
+            };
+        colors?:
+          | T
+          | {
+              value?: T;
+              id?: T;
+            };
+      };
+  pricingRules?:
+    | T
+    | {
         size?: T;
         color?: T;
-        inventoryQuantity?: T;
+        price?: T;
         id?: T;
       };
+  variantInventory?:
+    | T
+    | {
+        id?: T;
+        size?: T;
+        color?: T;
+        price?: T;
+        inventoryQuantity?: T;
+      };
+  category?: T;
   image?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -449,21 +492,16 @@ export interface OrdersSelect<T extends boolean = true> {
  */
 export interface UsersCartSelect<T extends boolean = true> {
   user?: T;
-  total?: T;
   items?:
     | T
     | {
         product?: T;
-        variant?:
-          | T
-          | {
-              price?: T;
-              size?: T;
-              color?: T;
-            };
+        variantId?: T;
         quantity?: T;
+        subTotal?: T;
         id?: T;
       };
+  total?: T;
   updatedAt?: T;
   createdAt?: T;
 }
