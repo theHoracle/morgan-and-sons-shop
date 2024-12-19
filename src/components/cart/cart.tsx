@@ -70,7 +70,7 @@ export function Cart({ isOpen, onClose, cart }: CartProps) {
                       <span className="mx-2">{item.quantity}</span>
                       <button
                         onClick={() => {
-                          if (typeof item.product === 'object' && item.product !== null) {
+                          if (typeof item.product === 'object' && item.product !== null && item.variantId) {
                             onAddItem({ selectedVariantId: item.variantId, product: item.product })
                           }
                         }}
