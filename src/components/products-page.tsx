@@ -9,6 +9,7 @@ import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carouse
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Product } from '@/payload-types'
 import { AddToCart } from '@/components/cart/add-to-cart'
+import { formatNairaPrice } from '@/lib/helpers'
 
 const ProductPage = (props: { product: Product }) => {
   const { product } = props
@@ -119,11 +120,11 @@ const ProductPage = (props: { product: Product }) => {
 
             <div className="flex items-center space-x-4">
               <span className="text-3xl font-bold text-primary">
-                ${selectedVariant?.price || product.price}
+                {formatNairaPrice(selectedVariant?.price || product.price)}
               </span>
               {product.priceRange?.min && product.priceRange?.max && (
                 <span className="text-lg text-gray-500">
-                  ${product.priceRange.min} - ${product.priceRange.max}
+                  {formatNairaPrice(product.priceRange.min)} - {formatNairaPrice(product.priceRange.max)}
                 </span>
               )}
             </div>
