@@ -185,13 +185,13 @@ export interface Product {
   attributes?: {
     sizes?:
       | {
-          value: string;
+          value?: string | null;
           id?: string | null;
         }[]
       | null;
     colors?:
       | {
-          value: string;
+          value?: string | null;
           id?: string | null;
         }[]
       | null;
@@ -242,7 +242,7 @@ export interface UsersCart {
   items?:
     | {
         product: number | Product;
-        variantId: string;
+        variantId?: string | null;
         quantity: number;
         subTotal?: number | null;
         id?: string | null;

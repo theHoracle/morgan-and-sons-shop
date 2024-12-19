@@ -74,7 +74,6 @@ export const Products: CollectionConfig = {
             {
               name: "value",
               type: "text",
-              required: true,
             },
           ],
           admin: {
@@ -88,7 +87,6 @@ export const Products: CollectionConfig = {
             {
               name: "value",
               type: "text",
-              required: true,
             },
           ],
           admin: {
