@@ -62,7 +62,7 @@ export function Cart({ isOpen, onClose, cart }: CartProps) {
                     </p>
                     <div className="flex items-center mt-1">
                       <button
-                        onClick={() => onRemoveItem({ previousData: cart, itemId: item.id!, removeCompletely: false })}
+                        onClick={() => onRemoveItem({ itemId: item.id!, removeCompletely: false })}
                         className="text-gray-500 hover:text-gray-700"
                       >
                         -
@@ -71,7 +71,7 @@ export function Cart({ isOpen, onClose, cart }: CartProps) {
                       <button
                         onClick={() => {
                           if (typeof item.product === 'object' && item.product !== null) {
-                            onAddItem({ currentCart: cart, selectedVariantId: item.variantId, product: item.product })
+                            onAddItem({ selectedVariantId: item.variantId, product: item.product })
                           }
                         }}
                         className="text-gray-500 hover:text-gray-700"
@@ -83,7 +83,7 @@ export function Cart({ isOpen, onClose, cart }: CartProps) {
                   <div className="text-right">
                     <p className="font-medium">${(variant?.price! * item.quantity).toFixed(2)}</p>
                     <button
-                      onClick={() => onRemoveItem({ previousData: cart, itemId: item.id!, removeCompletely: true })}
+                      onClick={() => onRemoveItem({ itemId: item.id!, removeCompletely: true })}
                       className="text-sm text-red-500 hover:text-red-700"
                     >
                       Remove
