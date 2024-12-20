@@ -81,6 +81,7 @@ export const addItem = async ({ currentCart, selectedVariantId, product, quantit
             quantity,
             variantId: selectedVariant.id,
             product: product,
+            subTotal: selectedVariant.price! * quantity,
         };
         updatedItems = [...existingItems, newItem];
     }
