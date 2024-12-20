@@ -9,18 +9,30 @@ type CartItem = NonNullable<UsersCart["items"]>[0];
 const COOKIE_CART_KEY = "cart";
 
 export const getCookieCart = async (): Promise<UsersCart | null> => {
-    const cart = (await cookies()).get(COOKIE_CART_KEY)?.value;
-    return cart ? JSON.parse(cart) : null
+    try {
+        const cart = (await cookies()).get(COOKIE_CART_KEY)?.value;
+        return cart ? JSON.parse(cart) : null;
+    } catch (error) {
+        console.error("Error getting cookie cart:", error);
+        return null;
+    }
 };
 
 export const setCookieCart = async (cart: UsersCart) => {
-    (await cookies()).set(COOKIE_CART_KEY, JSON.stringify(cart), { maxAge: 7 * 24 * 60 * 60, secure: true, sameSite: 'strict' });
+    try {
+        (await cookies()).set(COOKIE_CART_KEY, JSON.stringify(cart), { maxAge: 7 * 24 * 60 * 60, secure: true, sameSite: 'strict' });
+    } catch (error) {
+        console.error("Error setting cookie cart:", error);
+    }
 };
 
 export const getCart = async (): Promise<UsersCart | null> => {
     const headers = await nextHeaders();
     const { user } = await payload.auth({ headers });
-    if (!user) return getCookieCart();
+    if (!user) {
+        const usersCart = await getCookieCart();
+        return usersCart
+    }
     const { docs: cart } = await payload.find({
         collection: "users-cart",
         where: {
@@ -53,7 +65,8 @@ export const createCart = async () => {
     }
 };
 
-export const addItem = async ({ currentCart, selectedVariantId, product, quantity = 1 }: AddItem): Promise<UsersCart> => {
+export const addItem = async ({ currentCart, selectedVariantId, product, quantity = 1 }: AddItem): Promise<void> => {
+    try {
     const existingItems = currentCart.items || [];
     const existingItemIndex = existingItems.findIndex(
         (item) => item.variantId === selectedVariantId
@@ -101,12 +114,14 @@ export const addItem = async ({ currentCart, selectedVariantId, product, quantit
             data: updatedCart,
         });
     }
-
     await setCookieCart(updatedCart);
-    return updatedCart;
+    } catch(err) {
+        console.log('Error adding item: ', err)
+    }
 };
 
-export const removeItem = async ({ previousData, itemId, removeCompletely }: RemoveItem): Promise<UsersCart> => {
+export const removeItem = async ({ previousData, itemId, removeCompletely }: RemoveItem) => {
+    try {
     const existingItems = previousData.items ?? [];
 
     let updatedItems;
@@ -147,7 +162,10 @@ export const removeItem = async ({ previousData, itemId, removeCompletely }: Rem
     }
 
     await setCookieCart(updatedCart);
-    return updatedCart;
+    } catch(err) {
+        console.log('Error removing item: ', err)
+    }
+
 };
 
 type AddItem = {

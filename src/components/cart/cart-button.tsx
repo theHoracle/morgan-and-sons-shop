@@ -8,7 +8,9 @@ import { Cart } from "./cart"
 export function CartButton() {
   const [isCartOpen, setIsCartOpen] = useState(false)
   const { data: cart } = useGetCart()
-
+  if(isCartOpen) {
+    console.log(cart)
+  }
   const totalCartItems = cart?.items?.length || 0
 
   return <div>

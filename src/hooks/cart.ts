@@ -1,4 +1,4 @@
-import { addItem, getCart, removeItem, createCart, getCookieCart, setCookieCart } from "@/components/cart/action"
+import { addItem, getCart, removeItem, createCart, getCookieCart } from "@/components/cart/action"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { UsersCart } from "@/payload-types"
 
@@ -27,9 +27,8 @@ export const useAddItem = () => {
         mutationFn: async (item: { selectedVariantId: string, product: any }) => {
             const cart = await getCookieCart()
             if (cart) {
-                const updatedCart = await addItem({ currentCart: cart, selectedVariantId: item.selectedVariantId, product: item.product })
-                await setCookieCart(updatedCart)
-                return updatedCart
+                await addItem({ currentCart: cart, selectedVariantId: item.selectedVariantId, product: item.product })
+                
             } else {
                 const serverCart = await getCart()
                 if (serverCart) {
@@ -52,9 +51,7 @@ export const useRemoveItem = () => {
         mutationFn: async (item: { itemId: string, removeCompletely?: boolean }) => {
             const cart = await getCookieCart()
             if (cart) {
-                const updatedCart = await removeItem({ previousData: cart, itemId: item.itemId, removeCompletely: item.removeCompletely })
-                await setCookieCart(updatedCart)
-                return updatedCart
+                await removeItem({ previousData: cart, itemId: item.itemId, removeCompletely: item.removeCompletely })    
             } else {
                 const serverCart = await getCart()
                 if (serverCart) {
