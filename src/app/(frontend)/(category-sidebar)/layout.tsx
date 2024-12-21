@@ -1,4 +1,4 @@
-import { CartButton } from "@/components/cart/cart-button";
+import Cart from "@/components/cart/cart";
 import { AppSidebar } from "@/components/sidebar/app-sidebar"
 import {
   Breadcrumb,
@@ -48,7 +48,7 @@ export default async function Layout({
                 </BreadcrumbList>
             </Breadcrumb>
             </div>
-            <CartButton />
+            <Cart />
             </header>
             <div className="flex flex-1 flex-col p-4">
             {children}
