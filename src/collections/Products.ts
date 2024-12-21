@@ -242,7 +242,7 @@ export const Products: CollectionConfig = {
           }
   
           // Generate product slug if missing
-          if (data.title) {
+          if (data.title && operation === "create") {
             data.slug = slugify(data.title);
           }
         }
