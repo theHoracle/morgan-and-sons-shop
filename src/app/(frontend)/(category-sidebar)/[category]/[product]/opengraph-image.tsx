@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og'
-import { payload } from "@/payload"
 import { notFound } from "next/navigation"
 
+export const runtime = 'edge';
 
 // Image metadata
 export const alt = "About the product";
@@ -19,16 +19,19 @@ export default async function Image (props: {
 }) {
     const { product: productParam } = await props.params
     const decodedProduct = decodeURIComponent(productParam)
-    const { docs: products } = await payload.find({
-        collection: 'products',
-        where: {
-            slug: {
-                equals: decodedProduct
-            }
-        }
-    })
-    const [product] = products
-    if(!product) return notFound()
+    // const { docs: products } = await payload.find({
+    //     collection: 'products',
+    //     where: {
+    //         slug: {
+    //             equals: decodedProduct
+    //         }
+    //     }
+    // })
+    // const [product] = products
+    // if(!product) return notFound()
+    const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/product?productSlug=${decodedProduct}`)
+    if(!res.ok) return notFound()
+    const product = await res.json()
     const productImage = typeof product.image !== 'number' ? product.image.url as string : "/product-placeholder.svg"
 
     return new ImageResponse((
