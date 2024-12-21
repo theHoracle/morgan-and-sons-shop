@@ -30,22 +30,18 @@ export default function Cart() {
   // get total price of all items in the cart
 
   return ( <Sheet>
-    <SheetTrigger asChild
-      className="relative p-2 text-gray-600 hover:text-gray-900"
-    >
-      <>
+    <SheetTrigger asChild>
+      <div className="relative p-2 text-gray-600 hover:text-gray-900">
       <ShoppingCart size={24} />
       {totalCartItems > 0 && (
         <span className="absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
           {totalCartItems}
         </span>
       )}
-      </>
+      </div>
     </SheetTrigger>
 
-    <SheetContent
-      className=''
-      >
+    <SheetContent>
       <SheetHeader className="flex justify-between items-center p-4 border-b">
         <SheetTitle className="text-lg font-semibold">Your Cart</SheetTitle>
       </SheetHeader>

@@ -42,7 +42,7 @@ const ProductPage = (props: { product: Product }) => {
     setSelectedColor(color)
     updateSelectedVariant(selectedSize, color)
   }
-
+  console.log("Product: ", product, "\nVariantID: ", selectedVariant?.id, "\nQuantity: ", quantity, "\nSelectedImage: ", selectedImage, "\nSelectedSize: ", selectedSize, "\nSelectedColor: ", selectedColor)
   return (
     <div className="container mx-auto px-4 py-12 bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="max-w-7xl mx-auto">
