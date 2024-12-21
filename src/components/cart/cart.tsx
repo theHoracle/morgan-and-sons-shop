@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+"use client"
 import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAddItem, useRemoveItem } from '@/hooks/cart'
@@ -14,12 +14,8 @@ export function Cart({ isOpen, onClose, cart }: CartProps) {
   const { mutate: onAddItem } = useAddItem()
   const { mutate: onRemoveItem } = useRemoveItem()
     
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-  
-  if (!mounted || !cart) {
+  if  (!cart) {
+    if(isOpen) onClose()
     return null
   }
   const { items } = cart
