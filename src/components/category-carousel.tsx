@@ -9,7 +9,7 @@ const CategoryCarousel = async (props: {
         collection: 'products',
         where: {
             category: {
-
+                equals: categoryId
             } 
         },
         select: {

@@ -1,4 +1,5 @@
-import { useAddItem, useCreateCart, useGetCart } from "@/hooks/cart";
+"use client"
+import { useAddItem } from "@/hooks/cart";
 import { Product } from "@/payload-types";
 import clsx from "clsx";
 import { PlusIcon } from "lucide-react";
@@ -40,6 +41,7 @@ function SubmitButton({
   
     return (
       <button
+        type="submit" // Fixed here
         aria-label="Add to cart"
         className={clsx(buttonClasses, {
           'hover:opacity-90': true
@@ -50,7 +52,7 @@ function SubmitButton({
         </div>
         Add To Cart
       </button>
-    );
+    );    
   }
 
 export function AddToCart({ product, selectedVariantId }: { product: Product, selectedVariantId: string }) {

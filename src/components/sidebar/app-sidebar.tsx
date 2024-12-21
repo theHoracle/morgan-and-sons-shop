@@ -67,11 +67,10 @@ export function AppSidebar({
                       <Minus className="ml-auto group-data-[state=closed]/collapsible:hidden" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
-                  {Array.isArray(menu.categories) && menu.categories?.length ? (
+                  {Array.isArray(menu.categories?.docs) && menu.categories?.docs.length ? (
                     <CollapsibleContent>
                       <SidebarMenuSub>
-                      {Array.isArray(menu.categories.docs) && 
-                         menu.categories.docs?.filter((category) => typeof category !== 'number')
+                      {menu.categories.docs?.filter((category) => typeof category !== 'number')
                          .map((category) => (
                           <SidebarMenuSubItem key={category.id}>
                               <SidebarMenuSubButton

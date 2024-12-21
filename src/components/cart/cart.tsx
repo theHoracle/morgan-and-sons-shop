@@ -41,9 +41,9 @@ export default function Cart() {
       </div>
     </SheetTrigger>
 
-    <SheetContent>
-      <SheetHeader className="flex justify-between items-center p-4 border-b">
-        <SheetTitle className="text-lg font-semibold">Your Cart</SheetTitle>
+    <SheetContent >
+      <SheetHeader className="flex items-start pb-1 border-b">
+        <SheetTitle className="text-2xl tracking-tight leading-tight font-semibold">Cart</SheetTitle>
       </SheetHeader>
       {cart ?  <div className="flex flex-col h-full">
         <div className="flex-grow overflow-y-auto p-4">

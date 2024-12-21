@@ -1,3 +1,4 @@
+import { isAdminOrOwner } from '@/lib/helpers'
 import type { CollectionConfig } from 'payload'
 
 export const Users: CollectionConfig = {
@@ -7,7 +8,8 @@ export const Users: CollectionConfig = {
   },
   auth: true,
   access: {
-    admin: ({ req }) => req.user?.role === "admin"
+    admin: ({ req }) => req.user?.role === "admin",
+    read: isAdminOrOwner,
   },
   fields: [
     {

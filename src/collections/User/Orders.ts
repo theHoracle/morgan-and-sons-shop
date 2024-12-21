@@ -1,16 +1,10 @@
+import { isAdminOrOwner } from "@/lib/helpers";
 import { Access, CollectionConfig } from "payload";
-
-const isAdminOrOwner: Access = ({ req, data })  => {
-    if(req?.user?.role === 'admin') return true
-    if(req?.user?.id === data?.user) return true
-    return false
-    
-}
 
 export const Orders: CollectionConfig = {
     slug: 'orders',
     access: {
-        read: isAdminOrOwner
+        read: isAdminOrOwner,
     },
     fields: [
         {
