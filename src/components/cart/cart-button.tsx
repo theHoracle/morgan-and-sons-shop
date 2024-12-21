@@ -1,21 +1,19 @@
 "use client"
-
 import { ShoppingCart } from "lucide-react"
 import { useGetCart } from "@/hooks/cart"
 import { useState } from "react"
 import { Cart } from "./cart"
+import { Sheet, SheetTrigger } from "../ui/sheet"
 
 export function CartButton() {
-  const [isCartOpen, setIsCartOpen] = useState(false)
   const { data: cart } = useGetCart()
-  if(isCartOpen) {
-    console.log(cart)
-  }
+  
+  console.log("Cart: ", cart)
+  
   const totalCartItems = cart?.items?.length || 0
 
-  return <div>
-    <button
-      onClick={() => setIsCartOpen(true)}
+  return <Sheet>
+    <SheetTrigger asChild
       className="relative p-2 text-gray-600 hover:text-gray-900"
     >
       <ShoppingCart size={24} />
@@ -24,11 +22,9 @@ export function CartButton() {
           {totalCartItems}
         </span>
       )}
-    </button>
+    </SheetTrigger>
     <Cart
-      isOpen={isCartOpen}
-      onClose={() => setIsCartOpen(false)}
       cart={cart}
     />
-  </div>
+  </Sheet>
 }

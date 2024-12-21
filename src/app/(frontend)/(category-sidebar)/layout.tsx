@@ -48,9 +48,7 @@ export default async function Layout({
                 </BreadcrumbList>
             </Breadcrumb>
             </div>
-            <div className="flex items-center gap-2">
-              <CartButton />
-            </div>
+            <CartButton />
             </header>
             <div className="flex flex-1 flex-col p-4">
             {children}

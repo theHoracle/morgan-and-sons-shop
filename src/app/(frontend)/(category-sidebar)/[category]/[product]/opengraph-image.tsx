@@ -29,10 +29,7 @@ export default async function Image (props: {
     })
     const [product] = products
     if(!product) return notFound()
-    
-    const productImage = typeof product.image !== 'number' ? 
-                        (product.image.url ?? "/product-placeholder.svg") 
-                        : "/product-placeholder.svg"
+    const productImage = typeof product.image !== 'number' ? product.image.url as string : "/product-placeholder.svg"
 
     return new ImageResponse((
         <div
