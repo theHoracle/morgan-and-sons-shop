@@ -197,9 +197,13 @@ export const Products: CollectionConfig = {
               // Find pricing rule for this variant
               const rule = pricingRules.find(
                 (r: any) =>
-                  (!r.size || r.size === size) &&
-                  (!r.color || r.color === color)
+                  // Match size: Either no size specified or it matches the provided size
+                  (!r.size || r.size === size || r.size === null || r.size === "") &&
+              
+                  // Match color: Either no color specified or it matches the provided color
+                  (!r.color || r.color === color || r.color === null || r.color === "")
               );
+              
   
               const price = rule ? rule.price : data.price; // Default price if no rule matches
   

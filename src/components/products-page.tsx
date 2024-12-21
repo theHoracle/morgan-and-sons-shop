@@ -1,11 +1,9 @@
 'use client'
 import { useState } from 'react'
 import Image from 'next/image'
-import { Minus, Plus, ShoppingCart } from 'lucide-react'
+import { Minus, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Product } from '@/payload-types'
 import { AddToCart } from '@/components/cart/add-to-cart'
 import { formatNairaPrice } from '@/lib/helpers'
@@ -195,7 +193,6 @@ const ProductPage = (props: { product: Product }) => {
                 </Button>
               </div>
             </div>
-
             <AddToCart product={product} selectedVariantId={selectedVariant?.id || ''} />
           </div>
         </div>

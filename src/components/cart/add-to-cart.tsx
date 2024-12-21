@@ -62,9 +62,8 @@ export function AddToCart({ product, selectedVariantId }: { product: Product, se
   
     const handleSubmit = (event: React.FormEvent) => {
       event.preventDefault();
-      if (selectedVariantId) {
-        addItem({ selectedVariantId, product });
-      }
+      addItem({ selectedVariantId, product });
+      
     };
   
     return (
