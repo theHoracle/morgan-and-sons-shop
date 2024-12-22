@@ -83,12 +83,13 @@ export const addItem = async ({
     try {
         const currentCart = await getCart();
         if (!currentCart) return null;
-
         const existingItems = currentCart.items || [];
+        console.log("selectedVariant: ", selectedVariantId, "\existingItems: ")
+        console.dir(existingItems)
         const existingItemIndex = existingItems.findIndex(
-            (item) => item.variantId === selectedVariantId
+            (item) => item.variantId === selectedVariantId && item.prod
         );
-
+        console.log("Itemindex: ", existingItems)
         let updatedItems;
         if (existingItemIndex > -1) {
             updatedItems = existingItems.map((item, index) => {

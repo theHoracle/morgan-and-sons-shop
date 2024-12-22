@@ -21,11 +21,8 @@ const LoginTab = () => {
           password: "",
         },
       });
-      const onSubmit = async () => {
-        await loginUser({
-            email: form.getValues("email"),
-            password: form.getValues("password")
-        })
+      const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        await loginUser(values)
       }
     return (
         <Form {...form}>    

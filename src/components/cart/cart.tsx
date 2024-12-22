@@ -60,37 +60,37 @@ export default function Cart() {
               const productImage = typeof item.product.image === "object" ? (item.product.image.thumbnailURL ?? "placeholder.png") : "/placeholder.png"
               return (
                 <div key={item.id} className="flex items-center justify-between py-4 border-b">
-                  <div className="relative aspect-sqaure h-full">
-                    <Image
-                    src={productImage}
-                    alt={item.product.title}
-                    fill
-                    className='object-cover object-center'
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-medium">{item.product.title}</h3>
-                    <p className="text-sm text-gray-500">
-                      {variant?.size} / {variant?.color}
-                    </p>
-                    <div className="flex items-center mt-1">
-                      <button
-                        onClick={() => onRemoveItem({ itemId: item.id!, removeCompletely: false })}
-                        className="text-gray-500 hover:text-gray-700"
-                      >
-                        -
-                      </button>
-                      <span className="mx-2">{item.quantity}</span>
-                      <button
-                        onClick={() => {
-                          if (typeof item.product === 'object' && item.product !== null && item.variantId) {
-                            onAddItem({ selectedVariantId: item.variantId, product: item.product })
-                          }
-                        }}
-                        className="text-gray-500 hover:text-gray-700"
-                      >
-                        +
-                      </button>
+                  <div className='flex gap-4 items-center'>
+                      <Image
+                      src={productImage}
+                      alt={item.product.title}
+                      width={80}
+                      height={80}
+                      />
+                    <div>
+                      <h3 className="font-medium">{item.product.title}</h3>
+                      <p className="text-sm text-gray-500">
+                        {variant?.size} / {variant?.color}
+                      </p>
+                      <div className="flex items-center mt-1">
+                        <button
+                          onClick={() => onRemoveItem({ itemId: item.id!, removeCompletely: false })}
+                          className="text-gray-500 hover:text-gray-700"
+                        >
+                          -
+                        </button>
+                        <span className="mx-2">{item.quantity}</span>
+                        <button
+                          onClick={() => {
+                            if (typeof item.product === 'object' && item.product !== null && item.variantId) {
+                              onAddItem({ selectedVariantId: item.variantId, product: item.product })
+                            }
+                          }}
+                          className="text-gray-500 hover:text-gray-700"
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
                   </div>
                   <div className="text-right">
@@ -107,16 +107,16 @@ export default function Cart() {
             })
           )}
         </div>
-        <SheetFooter className="border-t">
-          <div className="flex justify-between items-center mb-4">
-            <span className="font-semibold">Total</span>
-            <span className="font-semibold">{formatNairaPrice(getTotal(cart) || 0)}</span>
-          </div>
-          
-          <Button className="w-full my-4" disabled={cart.items?.length === 0}>
-            Proceed to Checkout
-          </Button>
-          
+        <SheetFooter className="border-t flex flex-col ">
+            <div className="flex justify-between items-center my-4">
+              <span className="font-semibold">Total</span>
+              <span className="font-semibold">{formatNairaPrice(getTotal(cart) || 0)}</span>
+            </div>
+            <SheetClose asChild>
+            <Button className="w-full mt-2 mb-6" disabled={cart.items?.length === 0}>
+              Proceed to Checkout
+            </Button>
+            </SheetClose>
         </SheetFooter>
       </div> : <div className="flex flex-col h-full items-center justify-center gap-4">
       <SheetDescription className="text-center text-gray-500">Your cart is empty</SheetDescription>

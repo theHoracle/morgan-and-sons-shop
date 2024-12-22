@@ -1,13 +1,14 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { Product } from '@/payload-types'
+import { Category, Product } from '@/payload-types'
 import { formatNairaPrice } from '@/lib/helpers'
 
 interface ProductCardProps {
   product: Partial<Product>
+  categoryObj?: Category
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, categoryObj }: ProductCardProps) {
   const { title, image, priceRange, slug, category } = product
   
   if(!title || !image || !priceRange || !slug || !category) return null
@@ -21,7 +22,7 @@ export function ProductCard({ product }: ProductCardProps) {
       ? `${formatNairaPrice(priceRange.min)} - ${formatNairaPrice(priceRange.max)}`
       : 'Price not available'
 
-  const categorySlug = typeof category !== 'number' ? category.slug : '/products'
+  const categorySlug = typeof category !== 'number' ? category.slug : categoryObj?.slug
   return (
     <Link 
     href={`/${categorySlug}/${slug}`}

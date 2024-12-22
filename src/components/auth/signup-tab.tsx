@@ -7,6 +7,7 @@ import { z } from "zod";
 import { Button } from "../ui/button";
 import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
+import { toast } from "sonner";
 
 const formSchema = z.object({
     email: z.string().email(),
@@ -24,14 +25,16 @@ const SignupTab = () => {
         },
     });
 
-    const onSubmit = async () => {
-      if(form.getValues("password") === form.getValues("confirmPassword")) {
-          await signupUser({
-              email: form.getValues("email"),
-              password: form.getValues("password")
-            })
-        }
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+      if(values.password !== values.confirmPassword) {
+        toast.error("Passwords do not match.")    
+      }
+      await signupUser({
+            email: values.email,
+            password: values.password
+        })
     }
+    
     return (
         <Form {...form}>    
             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -56,12 +59,28 @@ const SignupTab = () => {
                 name="password"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Password</FormLabel>
                     <FormControl>
-                        <Input placeholder="******" type="password" {...field} />
+                        <Input placeholder="password" type="password" {...field} />
                     </FormControl>
                     <FormDescription>
                         Enter your Password
+                    </FormDescription>
+                    <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Confirm Password</FormLabel>
+                    <FormControl>
+                        <Input placeholder="password" type="password" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                        Enter your password again
                     </FormDescription>
                     <FormMessage />
                     </FormItem>

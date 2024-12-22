@@ -41,9 +41,12 @@ const Categories = async (props: {
             <p className='text-sm'>{amount} {amount === 1 ? 'Product' : 'Products'}</p>
             <hr className='mt-1 w-full stroke-neutral-700' />
             
-            <div className='flex flex-row flex-wrap justify-center gap-2'>
+            <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 py-1'>
             {cat.products?.docs?.filter(product => typeof product !== 'number').map((product) => (
-                    <ProductCard product={product} key={product.id} />
+                    <ProductCard 
+                    categoryObj={cat}
+                    product={product} 
+                    key={product.id} />
             ))}
             </div>
             
