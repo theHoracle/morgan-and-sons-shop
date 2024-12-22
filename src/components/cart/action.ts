@@ -87,7 +87,7 @@ export const addItem = async ({
         console.log("selectedVariant: ", selectedVariantId, "\existingItems: ")
         console.dir(existingItems)
         const existingItemIndex = existingItems.findIndex(
-            (item) => item.variantId === selectedVariantId && item.prod
+            (item) => item.variantId === selectedVariantId
         );
         console.log("Itemindex: ", existingItems)
         let updatedItems;
