@@ -8,29 +8,32 @@ type CartItem = NonNullable<UsersCart["items"]>[0];
 const COOKIE_CART_KEY = "cart";
 
 // -- Cookie Handling
-export const getCookieCart = async (): Promise<UsersCart | null> => {
+export const getCookieCart = async () => {
     console.log("Getting cookie cart");
     try {
         const cart = (await cookies()).get(COOKIE_CART_KEY)?.value;
         console.log("Got cookie cart: ", cart);
-        return cart ? JSON.parse(cart) : null;
+        return cart ? JSON.parse(cart) : (await setCookieCart());
     } catch (error) {
         console.error("Error getting cookie cart:", error);
         return null;
     }
 };
 
-export const setCookieCart = async (cart: UsersCart) => {
-    console.log("Setting cookie cart: ", cart);
+export const setCookieCart = async (cart?: UsersCart) => {
+    const userCart = cart || { items: [], total: 0 };
+    console.log("Setting cookie cart: ", userCart);
     try {
-        (await cookies()).set(COOKIE_CART_KEY, JSON.stringify(cart), {
+        console.log("Set cookie cart: ", cart);
+        return (await cookies()).set(COOKIE_CART_KEY, JSON.stringify(userCart), {
             maxAge: 7 * 24 * 60 * 60,
             secure: true,
             sameSite: "strict",
         });
-        console.log("Set cookie cart: ", cart);
+        
     } catch (error) {
         console.error("Error setting cookie cart:", error);
+        return null;
     }
 };
 

@@ -23,9 +23,7 @@ export const useAddItem = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationKey: ['cart/add'],
-        mutationFn: async ({ selectedVariantId, product }: { selectedVariantId: string, product: any }) => {
-            return await addItem({ selectedVariantId, product });
-        },
+        mutationFn: addItem,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['cart'] });
         },
@@ -36,9 +34,7 @@ export const useRemoveItem = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationKey: ['cart/remove'],
-        mutationFn: async ({ itemId, removeCompletely }: { itemId: string, removeCompletely?: boolean }) => {
-            return await removeItem({ itemId, removeCompletely });
-        },
+        mutationFn: removeItem,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['cart'] });
         },
