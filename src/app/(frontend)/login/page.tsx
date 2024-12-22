@@ -1,4 +1,4 @@
-import AuthForm from "@/components/auth-form"
+import AuthForm from "@/components/auth/auth-form"
 import { Card } from "@/components/ui/card"
 import { getUser } from "@/lib/session"
 import { GalleryVerticalEnd } from "lucide-react"

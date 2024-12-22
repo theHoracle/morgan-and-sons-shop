@@ -60,7 +60,7 @@ export default function Cart() {
               const productImage = typeof item.product.image === "object" ? (item.product.image.thumbnailURL ?? "placeholder.png") : "/placeholder.png"
               return (
                 <div key={item.id} className="flex items-center justify-between py-4 border-b">
-                  <div className="aspect-sqaure h-full">
+                  <div className="relative aspect-sqaure h-full">
                     <Image
                     src={productImage}
                     alt={item.product.title}
