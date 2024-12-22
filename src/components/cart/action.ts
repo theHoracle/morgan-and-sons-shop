@@ -9,8 +9,10 @@ const COOKIE_CART_KEY = "cart";
 
 // -- Cookie Handling
 export const getCookieCart = async (): Promise<UsersCart | null> => {
+    console.log("Getting cookie cart");
     try {
         const cart = (await cookies()).get(COOKIE_CART_KEY)?.value;
+        console.log("Got cookie cart: ", cart);
         return cart ? JSON.parse(cart) : null;
     } catch (error) {
         console.error("Error getting cookie cart:", error);
@@ -19,12 +21,14 @@ export const getCookieCart = async (): Promise<UsersCart | null> => {
 };
 
 export const setCookieCart = async (cart: UsersCart) => {
+    console.log("Setting cookie cart: ", cart);
     try {
         (await cookies()).set(COOKIE_CART_KEY, JSON.stringify(cart), {
             maxAge: 7 * 24 * 60 * 60,
             secure: true,
             sameSite: "strict",
         });
+        console.log("Set cookie cart: ", cart);
     } catch (error) {
         console.error("Error setting cookie cart:", error);
     }
@@ -35,7 +39,7 @@ export const getCart = async (): Promise<UsersCart | null> => {
     const headers = await nextHeaders();
     const { user } = await payload.auth({ headers });
     if (!user) {
-        return getCookieCart();
+        return (await getCookieCart())
     }
 
     const { docs: cart } = await payload.find({
@@ -111,12 +115,13 @@ export const addItem = async ({
         const updatedCart = {
             ...currentCart,
             items: updatedItems,
-            total: updatedItems.reduce(
+            total: updatedItems?.reduce(
                 (acc, item) => acc + (item.subTotal || 0),
                 0
-            ),
+            ) || 0,
         };
-
+        console.log("-----------------------------------Updated Cart-----------------------------------");
+        console.dir(updatedCart);
         const headers = await nextHeaders();
         const { user } = await payload.auth({ headers });
         if (user) {
