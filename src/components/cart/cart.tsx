@@ -6,6 +6,7 @@ import { UsersCart } from '@/payload-types'
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '../ui/sheet'
 import Link from 'next/link'
 import { formatNairaPrice } from '@/lib/helpers'
+import Image from 'next/image'
 
  
 export default function Cart() {
@@ -41,12 +42,12 @@ export default function Cart() {
       </div>
     </SheetTrigger>
 
-    <SheetContent >
+    <SheetContent className='w-screen md:max-w-[400px]' >
       <SheetHeader className="flex items-start pb-1 border-b">
         <SheetTitle className="text-2xl tracking-tight leading-tight font-semibold">Cart</SheetTitle>
       </SheetHeader>
       {cart ?  <div className="flex flex-col h-full">
-        <div className="flex-grow overflow-y-auto p-4">
+        <div className="flex-grow overflow-y-auto py-4">
           {cart.items?.length === 0 ? (
             <SheetDescription className="text-center text-gray-500">Your cart is empty</SheetDescription>
           ) : (
@@ -55,9 +56,18 @@ export default function Cart() {
 
               const variant = item.product.variantInventory?.find(v => v.id === item.variantId)
               
-
+              // make variant image later
+              const productImage = typeof item.product.image === "object" ? (item.product.image.thumbnailURL ?? "placeholder.png") : "/placeholder.png"
               return (
                 <div key={item.id} className="flex items-center justify-between py-4 border-b">
+                  <div className="aspect-sqaure h-full">
+                    <Image
+                    src={productImage}
+                    alt={item.product.title}
+                    fill
+                    className='object-cover object-center'
+                    />
+                  </div>
                   <div>
                     <h3 className="font-medium">{item.product.title}</h3>
                     <p className="text-sm text-gray-500">
@@ -84,7 +94,7 @@ export default function Cart() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium">${(variant?.price! * item.quantity).toFixed(2)}</p>
+                    <p className="font-medium">{formatNairaPrice(variant?.price! * item.quantity)}</p>
                     <button
                       onClick={() => onRemoveItem({ itemId: item.id!, removeCompletely: true })}
                       className="text-sm text-red-500 hover:text-red-700"
@@ -102,11 +112,11 @@ export default function Cart() {
             <span className="font-semibold">Total</span>
             <span className="font-semibold">{formatNairaPrice(getTotal(cart) || 0)}</span>
           </div>
-          <SheetClose>  
-          <Button className="w-full" disabled={cart.items?.length === 0}>
+          
+          <Button className="w-full my-4" disabled={cart.items?.length === 0}>
             Proceed to Checkout
           </Button>
-          </SheetClose>
+          
         </SheetFooter>
       </div> : <div className="flex flex-col h-full items-center justify-center gap-4">
       <SheetDescription className="text-center text-gray-500">Your cart is empty</SheetDescription>

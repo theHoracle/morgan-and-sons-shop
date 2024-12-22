@@ -14,6 +14,8 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { payload } from "@/payload";
+import { UserRound } from "lucide-react";
+import Link from "next/link";
 
 
 export default async function Layout({
@@ -48,7 +50,13 @@ export default async function Layout({
                 </BreadcrumbList>
             </Breadcrumb>
             </div>
+            <div className="flex items-center gap-2">
+            <Link href="/login">
+              <UserRound />
+            </Link>
+            <Separator orientation="vertical" className="h-4" />
             <Cart />
+            </div>
             </header>
             <div className="flex flex-1 flex-col p-4">
             {children}
