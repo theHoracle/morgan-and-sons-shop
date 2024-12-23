@@ -5,9 +5,7 @@ import { Product, UsersCart } from "@/payload-types";
 import { headers as nextHeaders, cookies } from "next/headers";
 
 type CartItem = NonNullable<UsersCart["items"]>[0];
-const COOKIE_CART_KEY = "cart";
-
-
+const COOKIE_CART_KEY = "cartID";
 
 
 // -- Cookie Handling
@@ -114,10 +112,6 @@ export const addItem = async ({
         const updatedCart = {
             ...currentCart,
             items: updatedItems,
-            total: updatedItems?.reduce(
-                (acc, item) => acc + (item.subTotal || 0),
-                0
-            ) || 0,
         };
         console.dir(updatedCart);
         await payload.update({

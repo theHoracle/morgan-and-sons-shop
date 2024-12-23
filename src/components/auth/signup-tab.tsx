@@ -2,10 +2,10 @@
 
 import { signupUser } from "@/app/(frontend)/login/action";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, Form } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../ui/button";
-import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "../ui/form";
+import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Form } from "../ui/form";
 import { Input } from "../ui/input";
 import { toast } from "sonner";
 

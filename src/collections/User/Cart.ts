@@ -67,6 +67,7 @@ export const UsersCart: CollectionConfig = {
       admin: {
         readOnly: true,
       },
+      defaultValue: 0,
       hooks: {
         beforeChange: [
           ({ data }) => {
