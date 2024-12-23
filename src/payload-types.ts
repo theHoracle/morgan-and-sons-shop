@@ -238,7 +238,7 @@ export interface Order {
  */
 export interface UsersCart {
   id: number;
-  user: number | User;
+  user?: (number | null) | User;
   items?:
     | {
         product: number | Product;

@@ -15,7 +15,7 @@ export const UsersCart: CollectionConfig = {
       name: "user",
       type: "relationship",
       relationTo: "users",
-      required: true,
+      required: false,
       hasMany: false,
     },
     {
