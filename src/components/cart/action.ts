@@ -7,31 +7,22 @@ import { headers as nextHeaders, cookies } from "next/headers";
 type CartItem = NonNullable<UsersCart["items"]>[0];
 const COOKIE_CART_KEY = "cart";
 
+
+
+
 // -- Cookie Handling
 export const getCookieCart = async () => {
     console.log("Getting cookie cart");
-    try {
-        const cart = (await cookies()).get(COOKIE_CART_KEY)?.value;
-        
-        return cart ? cart : null;
-    } catch (error) {
-        console.error("Error getting cookie cart:", error);
-        return null;
-    }
+    const cart = (await cookies()).get(COOKIE_CART_KEY)?.value;
+    return cart ? cart : null;
 };
 
 export const setCookieCart = async (cartId: string | number) => {
     console.log("Setting cookie cart: ", cartId);
-    try {
-        console.log("Set cookie cartID: ", cartId);
-        return (await cookies()).set(COOKIE_CART_KEY, JSON.stringify(cartId), {
-            secure: true,
-            sameSite: "strict",
-        });
-    } catch (error) {
-        console.error("Error setting cookie cart:", error);
-        return null;
-    }
+    (await cookies()).set(COOKIE_CART_KEY, JSON.stringify(cartId), {
+        secure: true,
+        sameSite: "strict",
+    });
 };
 
 const getCartById = async (cartId: string) => (
@@ -56,7 +47,6 @@ export const getCart = async (): Promise<UsersCart | null> => {
             }
             return (await getCartById(cartId))
         }
-    
     const { docs: carts } = await payload.find({
         collection: "users-cart",
         where: {
