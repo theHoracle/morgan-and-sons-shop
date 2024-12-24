@@ -25,7 +25,7 @@ export const getServerSideUser = async (
 ) => {
   const token = cookies.get("JWTSession")?.value;
   const meRes = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL ?? "http://localhost:3000"}/api/users/me`,
+    `${process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000"}/api/users/me`,
     {
       headers: {
         Authorization: `JWT ${token}`,
