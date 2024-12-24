@@ -8,6 +8,7 @@ import { Button } from "../ui/button";
 import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Form } from "../ui/form";
 import { Input } from "../ui/input";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
     email: z.string().email(),
@@ -24,20 +25,27 @@ const SignupTab = () => {
           confirmPassword: "",
         },
     });
-
+    const router = useRouter()
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
       if(values.password !== values.confirmPassword) {
         toast.error("Passwords do not match.")    
       }
-      await signupUser({
+      const res = await signupUser({
             email: values.email,
             password: values.password
         })
+      if(res && !res.status) {
+        toast.error("Signup failed. Please try again.")
+        console.log(res.error)
+        return
+      }
+      router.refresh()
+      toast.success("Signup successful. Please login.")
     }
     
     return (
         <Form {...form}>    
-            <form onSubmit={form.handleSubmit(onSubmit)}>
+            <form className="space-y-2.5" onSubmit={form.handleSubmit(onSubmit)}>
             <FormField
                 control={form.control}
                 name="email"
@@ -47,7 +55,7 @@ const SignupTab = () => {
                     <FormControl>
                         <Input placeholder="shop@here.com" {...field} />
                     </FormControl>
-                    <FormDescription>
+                    <FormDescription className="sr-only">
                         Enter your email
                     </FormDescription>
                     <FormMessage />
@@ -63,7 +71,7 @@ const SignupTab = () => {
                     <FormControl>
                         <Input placeholder="password" type="password" {...field} />
                     </FormControl>
-                    <FormDescription>
+                    <FormDescription className="sr-only">
                         Enter your Password
                     </FormDescription>
                     <FormMessage />
@@ -79,14 +87,14 @@ const SignupTab = () => {
                     <FormControl>
                         <Input placeholder="password" type="password" {...field} />
                     </FormControl>
-                    <FormDescription>
+                    <FormDescription className="sr-only">
                         Enter your password again
                     </FormDescription>
                     <FormMessage />
                     </FormItem>
                 )}
             />
-        <Button type="submit">Submit</Button>
+            <Button className="w-full"  type="submit">Submit</Button>
             </form>
         </Form>
     )

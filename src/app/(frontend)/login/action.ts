@@ -2,10 +2,11 @@
 
 import { setJWTSession } from "@/lib/session"
 import { payload } from "@/payload"
+import { redirect } from "next/navigation"
 
 export async function loginUser({
-    email, password
-}: {email: string, password: string}) {
+    email, password, redirectUrl
+}: {email: string, password: string, redirectUrl: string}) {
     const { token } = await payload.login({
         collection: "users",
         data: {
@@ -13,20 +14,27 @@ export async function loginUser({
             password
         },
     })
-    if(token) await setJWTSession(token)
+    if(token) {
+        await setJWTSession(token)
+        redirect(redirectUrl)
+    }
+    return {status: false}
 }
 
-export async function signupUser({email, password}: {email: string, password:string}) {
-    const { email:e, password:p } = await payload.create({
-        collection: "users",
-        data: {
-            email,
-            password
-        }
-    })
-    if(e && p)  await loginUser({
-        email: e,
-        password: p
-    })
+export async function signupUser({
+    email, password
+}: {
+    email: string, password:string}) {
+    try {
+         await payload.create({
+            collection: "users",
+            data: {
+                email,
+                password
+            }
+        })
+    } catch (error) {
+        return {status: false, error}
+    }
 }
 

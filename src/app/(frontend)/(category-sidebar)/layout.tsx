@@ -1,3 +1,4 @@
+import AuthLinkWithRedirect from "@/components/auth/add-redirect-link";
 import Cart from "@/components/cart/cart";
 import { AppSidebar } from "@/components/sidebar/app-sidebar"
 import {
@@ -13,9 +14,9 @@ import {
   SidebarInset,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { getServerSideUser } from "@/lib/session";
 import { payload } from "@/payload";
-import { UserRound } from "lucide-react";
-import Link from "next/link";
+import { cookies } from "next/headers";
 
 
 export default async function Layout({
@@ -23,11 +24,12 @@ export default async function Layout({
   }: {
     children: React.ReactNode;
   }) {
-    const { docs: menus } = await payload.find({
-      collection: 'menus',
-      depth: 1
-    })
-    console.log("menus: ", menus)
+    const nextCookies = await cookies()
+    const [{user} , {docs: menus}] = await Promise.all([
+      getServerSideUser(nextCookies),
+      payload.find({ collection: 'menus', depth: 1 })
+    ])
+    
     return (
         <>
         <AppSidebar menus={menus} />
@@ -51,9 +53,12 @@ export default async function Layout({
             </Breadcrumb>
             </div>
             <div className="flex items-center gap-2">
-            <Link href="/login">
-              <UserRound />
-            </Link>
+            {/*  */}
+            {user ? (<div className="flex flex-col items-center justify-center border border-stone-900 bg-muted rounded p-1">
+              <span className="uppercase font-bold tracking-tight text-xl" >{user.email.substring(0, 2)}</span>
+              </div>) : (
+              <AuthLinkWithRedirect />
+            )}
             <Separator orientation="vertical" className="h-4" />
             <Cart />
             </div>

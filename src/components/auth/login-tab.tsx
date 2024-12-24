@@ -7,6 +7,8 @@ import { z } from "zod";
 import { Button } from "../ui/button";
 import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Form } from "../ui/form";
 import { Input } from "../ui/input";
+import { useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 
 const formSchema = z.object({
     email: z.string().email(),
@@ -21,12 +23,19 @@ const LoginTab = () => {
           password: "",
         },
       });
+      const searchParams = useSearchParams()
+        const redirectUrl = searchParams.get("redirect") || "/"
+
       const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        await loginUser(values)
+        const res = await loginUser({...values, redirectUrl})
+        if(res && !res.status) {
+          toast.error("Login failed. Please try again.")
+          return
+        }
       }
     return (
         <Form {...form}>    
-            <form onSubmit={form.handleSubmit(onSubmit)}>
+            <form className="space-y-2.5" onSubmit={form.handleSubmit(onSubmit)}>
             <FormField
                 control={form.control}
                 name="email"
@@ -36,7 +45,7 @@ const LoginTab = () => {
                     <FormControl>
                         <Input placeholder="shop@here.com" {...field} />
                     </FormControl>
-                    <FormDescription>
+                    <FormDescription className="sr-only" >
                         Enter your email
                     </FormDescription>
                     <FormMessage />
@@ -52,14 +61,14 @@ const LoginTab = () => {
                     <FormControl>
                         <Input placeholder="******" type="password" {...field} />
                     </FormControl>
-                    <FormDescription>
+                    <FormDescription className="sr-only">
                         Enter your Password
                     </FormDescription>
                     <FormMessage />
                     </FormItem>
                 )}
             />
-            <Button type="submit">Submit</Button>
+            <Button className="w-full" type="submit">Submit</Button>
             </form>
         </Form>
     )
