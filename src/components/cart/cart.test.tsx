@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { Cart } from './cart'
+import Cart from './cart'
 import { UsersCart } from '@/payload-types'
 
 jest.mock('@/hooks/cart', () => ({
@@ -41,7 +41,7 @@ const mockCart: UsersCart = {
 
 describe('Cart Component', () => {
     it('renders correctly when open', () => {
-        render(<Cart isOpen={true} onClose={jest.fn()} cart={mockCart} />)
+        render(<Cart />)
         
         expect(screen.getByText('Your Cart')).toBeInTheDocument()
         expect(screen.getByText('Product 1')).toBeInTheDocument()
@@ -51,14 +51,14 @@ describe('Cart Component', () => {
     })
 
     it('renders empty cart message when there are no items', () => {
-        render(<Cart isOpen={true} onClose={jest.fn()} cart={{ ...mockCart, items: [] }} />)
+        render(<Cart />)
         
         expect(screen.getByText('Your cart is empty')).toBeInTheDocument()
     })
 
     it('calls onClose when close button is clicked', () => {
         const onClose = jest.fn()
-        render(<Cart isOpen={true} onClose={onClose} cart={mockCart} />)
+        render(<Cart />)
         
         fireEvent.click(screen.getByRole('button', { name: /close/i }))
         expect(onClose).toHaveBeenCalled()

@@ -25,7 +25,7 @@ export default async function Layout({
     children: React.ReactNode;
   }) {
     const nextCookies = await cookies()
-    const [{user} , {docs: menus}] = await Promise.all([
+    const [{ user } , { docs: menus }] = await Promise.all([
       getServerSideUser(nextCookies),
       payload.find({ collection: 'menus', depth: 1 })
     ])
@@ -54,8 +54,11 @@ export default async function Layout({
             </div>
             <div className="flex items-center gap-2">
             {/*  */}
-            {user ? (<div className="flex flex-col items-center justify-center border border-stone-900 bg-muted rounded p-1">
-              <span className="uppercase font-bold tracking-tight text-xl" >{user.email.substring(0, 2)}</span>
+            {user ? (
+              <div className="flex flex-col items-center justify-center border border-stone-900 bg-muted-foreground rounded p-1">
+              <span className="uppercase font-bold tracking-tight text-xl" >
+                {user.email.substring(0, 2)}
+                </span>
               </div>) : (
               <AuthLinkWithRedirect />
             )}

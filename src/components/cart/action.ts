@@ -1,8 +1,9 @@
 "use server";
 
+import { getServerSideUser } from "@/lib/session";
 import { payload } from "@/payload";
-import { Product, UsersCart } from "@/payload-types";
-import { headers as nextHeaders, cookies } from "next/headers";
+import { Product, User, UsersCart } from "@/payload-types";
+import { cookies } from "next/headers";
 
 type CartItem = NonNullable<UsersCart["items"]>[0];
 const COOKIE_CART_KEY = "cartID";
@@ -11,16 +12,13 @@ const COOKIE_CART_KEY = "cartID";
 // -- Cookie Handling
 export const getCookieCart = async () => {
     console.log("Getting cookie cart");
-    const cart = (await cookies()).get(COOKIE_CART_KEY)?.value;
-    return cart ? cart : null;
+    const cartId = (await cookies()).get(COOKIE_CART_KEY)?.value;
+    return cartId ? cartId : null;
 };
 
 export const setCookieCart = async (cartId: string | number) => {
     console.log("Setting cookie cart: ", cartId);
-    (await cookies()).set(COOKIE_CART_KEY, JSON.stringify(cartId), {
-        secure: true,
-        sameSite: "strict",
-    });
+    (await cookies()).set(COOKIE_CART_KEY, cartId.toString());
 };
 
 const getCartById = async (cartId: string) => (
@@ -31,20 +29,22 @@ const getCartById = async (cartId: string) => (
 )
 
 // -- Fetch Cart or Create New Cart
-export const getCart = async (): Promise<UsersCart | null> => {
-    const headers = await nextHeaders();
-    const { user } = await payload.auth({ headers });
+export const getCart = async () => {
+    // const headers = await nextHeaders();
+    // const { user } = await payload.auth({ headers });
+    const nextCookies = await cookies();
+    const { user } = await getServerSideUser(nextCookies)
 
     // if no user, check for cookie cart. If no cookie cart, create a new cart
     if (!user) {
         const cartId = await getCookieCart()
-            if (!cartId) {
-                const newCart = await createCart()
-                await setCookieCart(newCart.id)
-                return newCart
-            }
-            return (await getCartById(cartId))
+        if (!cartId) {
+            const newCart = await createCart()
+            await setCookieCart(newCart.id)
+            return newCart
         }
+        return getCartById(cartId)
+    }
     const { docs: carts } = await payload.find({
         collection: "users-cart",
         where: {
@@ -103,7 +103,7 @@ export const addItem = async ({
                 quantity,
                 variantId: selectedVariant.id,
                 product: product,
-                subTotal: selectedVariant.price! * quantity,
+                subTotal: (selectedVariant.price ?? 0) * quantity,
                 
             };
             updatedItems = [...existingItems, newItem];
@@ -144,9 +144,7 @@ export const removeItem = async ({
             updatedItems = existingItems.flatMap((cartItem) => {
                 if (cartItem.id === itemId) {
                     const updatedQuantity = (cartItem.quantity || 1) - 1;
-
                     if (updatedQuantity <= 0) return [];
-
                     return [
                         {
                             ...cartItem,
@@ -166,13 +164,12 @@ export const removeItem = async ({
                 0
             ),
         };
-
-        
-            await payload.update({
-                collection: "users-cart",
-                id: currentCart.id,
-                data: updatedCart,
-            });
+        // update cart
+        await payload.update({
+            collection: "users-cart",
+            id: currentCart.id,
+            data: updatedCart,
+        });
     } catch (err) {
         console.error("Error removing item: ", err);
     }
@@ -188,3 +185,35 @@ type RemoveItem = {
     itemId: string;
     removeCompletely?: boolean;
 };
+
+
+export const mergeUsersCart = async ({ userId }: {userId: number}) => {
+    // get guest cart
+    const getCookieCartId = await getCookieCart()
+    if(!getCookieCartId) return
+
+    // get carts
+    const [ guestCart, { docs: usersCart } ] = await Promise.all([
+        getCartById(getCookieCartId),
+        payload.find({ collection: "users-cart", where: { user: { equals: userId } } })
+    ])
+    const [userCart] = usersCart
+    if(!guestCart?.items || !userCart || !userCart.items) return;
+    
+    // Merge carts
+    const updatedItems = [...guestCart.items]
+    userCart.items.forEach(userCartItem => {
+        const existingItem = updatedItems.find(item => item.variantId === userCartItem.variantId)
+        if(existingItem) {
+            existingItem.quantity += userCartItem.quantity
+        } else {
+            updatedItems.push(userCartItem)
+        }
+    })
+    await payload.update({
+        collection: "users-cart",
+        id: userCart.id,
+        data: { items: updatedItems }
+    })
+
+}

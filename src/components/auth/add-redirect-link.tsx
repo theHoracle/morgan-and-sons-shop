@@ -10,7 +10,7 @@ const AuthLinkWithRedirect = ( ) => {
     return (
         <Link 
         href={href}
-        className="hover:bg-stone-950 bg-stone-800 hover:shadow-sm">
+        className="hover:text-stone-950 text-stone-800 hover:shadow-sm">
               <UserRound />
         </Link>
     )

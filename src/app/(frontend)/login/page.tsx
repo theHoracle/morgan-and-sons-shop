@@ -1,5 +1,4 @@
 import AuthForm from "@/components/auth/auth-form"
-import { Card } from "@/components/ui/card"
 import { getServerSideUser } from "@/lib/session"
 import { GalleryVerticalEnd } from "lucide-react"
 import { cookies } from "next/headers"
@@ -9,7 +8,7 @@ import { redirect, useSearchParams } from "next/navigation"
 
 export default async function LoginPage() {
   const nextCookies = await cookies()
-  const user = await getServerSideUser(nextCookies)
+  const { user } = await getServerSideUser(nextCookies)
   if(user) redirect('/') 
   return (
     <div className="flex min-h-svh w-screen flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">

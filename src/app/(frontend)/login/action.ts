@@ -1,5 +1,6 @@
 "use server"
 
+import { mergeUsersCart } from "@/components/cart/action"
 import { setJWTSession } from "@/lib/session"
 import { payload } from "@/payload"
 import { redirect } from "next/navigation"
@@ -7,15 +8,18 @@ import { redirect } from "next/navigation"
 export async function loginUser({
     email, password, redirectUrl
 }: {email: string, password: string, redirectUrl: string}) {
-    const { token } = await payload.login({
+    const { token, user } = await payload.login({
         collection: "users",
         data: {
             email,
             password
         },
     })
-    if(token) {
-        await setJWTSession(token)
+    if(token && user.id) {
+        await Promise.all([
+            setJWTSession(token),
+            mergeUsersCart({ userId: user.id })
+        ])
         redirect(redirectUrl)
     }
     return {status: false}

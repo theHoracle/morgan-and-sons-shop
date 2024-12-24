@@ -9,6 +9,7 @@ import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessa
 import { Input } from "../ui/input";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
     email: z.string().email(),
@@ -68,7 +69,10 @@ const LoginTab = () => {
                     </FormItem>
                 )}
             />
-            <Button className="w-full" type="submit">Submit</Button>
+            <Button className="w-full flex items-center" disabled={form.formState.isSubmitting} type="submit">
+                Submit
+                {form.formState.isSubmitting && <Loader2 className="size-5 animate-spin ml-1" />}    
+            </Button>
             </form>
         </Form>
     )
