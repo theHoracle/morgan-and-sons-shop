@@ -1,8 +1,6 @@
 import { payload } from "@/payload"
-import { PayloadRequest } from "payload"
 
-
-export const POST = async (req: PayloadRequest, res: Response) => {
+export const POST = async (req: Request) => {
   const body = req.text ? await req.text() : ''
   const { email, password } = await JSON.parse(body)
   if (!email || !password) {
@@ -15,7 +13,6 @@ export const POST = async (req: PayloadRequest, res: Response) => {
       email,
       password
     },
-    req,
   })
   
   
