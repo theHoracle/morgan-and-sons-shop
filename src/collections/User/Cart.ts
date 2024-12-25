@@ -54,19 +54,6 @@ export const UsersCart: CollectionConfig = {
           admin: {
             readOnly: true,
           },
-          hooks: {
-            beforeChange: [
-              ({ data }) => {
-                if(data?.variantId && data?.product) {
-                  const variant = data.product.variants?.find((variant: any) => variant.id === data.variantId);
-                  data.subTotal = variant?.price * data.quantity;
-                } else if(data?.product) {
-                  data.subTotal = data.product.price * data.quantity;
-                }
-                return data;
-              },
-            ],
-          },
         },
       ],
     },
@@ -77,14 +64,32 @@ export const UsersCart: CollectionConfig = {
         readOnly: true,
       },
       defaultValue: 0,
-      hooks: {
-        beforeChange: [
-          ({ data }) => {
-            const total = data?.items?.reduce((sum: number, item: any) => sum + (item.subTotal || 0), 0);
-            return { ...data, total };
-          },
-        ],
-      },
     },
   ],
+
+  hooks: {
+    beforeChange: [
+      async ({ data }) => {
+        // Calculate subTotal for each item
+        data.items = data.items?.map((item: any) => {
+          const variant = item.product?.variants?.find(
+            (v: any) => v.id === item.variantId
+          );
+          const price = variant?.price || item.product?.price || 0;
+          return {
+            ...item,
+            subTotal: price * (item.quantity || 1),
+          };
+        });
+
+        // Calculate total
+        data.total = data.items?.reduce(
+          (sum: number, item: any) => sum + (item.subTotal || 0),
+          0
+        );
+
+        return data;
+      },
+    ],
+  },
 };
