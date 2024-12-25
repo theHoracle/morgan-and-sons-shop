@@ -10,7 +10,7 @@ export async function generateStaticParams() {
             slug: true
         }
     })
-    if(!categories) {
+    if(categories.length === 0) {
         return []
     }
     return categories.map((category) => ({
@@ -18,15 +18,14 @@ export async function generateStaticParams() {
     }))
 }
 
-const Categories = async ({ params }: {params: Promise<{slug: string}>}) => {
-    const { slug } = await params
+const Categories = async ({ params }: {params: Promise<{category: string}>}) => {
+    const slug = await params
+    console.log("params: ", slug)
+
     const { docs: categories } = await payload.find({
         collection: 'categories',
-        where: {
-            slug: {
-                equals: slug
-            }
-        }
+        where: { slug: { equals: slug.category }},
+        depth: 2,
     })
     console.log(categories)
     const [cat] = categories
@@ -37,8 +36,11 @@ const Categories = async ({ params }: {params: Promise<{slug: string}>}) => {
 
     return (
         <div>
-            <h1>{cat.name} Category</h1>
-            <p className='text-sm'>{amount} {amount === 1 ? 'Product' : 'Products'}</p>
+            <h1
+            className="flex items-end justify-between w-full text-2xl font-semibold tracking-tighter leading-tight"
+            >{cat.name}
+            <p className='text-xs font-light tracking-normal lowercase'>{amount} {amount === 1 ? 'Product' : 'Products'}</p>
+            </h1>
             <hr className='mt-1 w-full stroke-neutral-700' />
             
             <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 py-1'>
