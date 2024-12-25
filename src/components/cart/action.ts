@@ -59,12 +59,15 @@ export const getCart = async () => {
 
 // -- Create Cart
 export const createCart = async (userId?: number) => {
-        return await payload.create({
+        const cart = await payload.create({
             collection: "users-cart",
             data: {
                 user: userId,
+                items: [],
+                total: 0,
             },
         });
+        return cart;
 };
 
 // -- Add Item to Cart

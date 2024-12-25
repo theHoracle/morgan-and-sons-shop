@@ -1,4 +1,12 @@
+import { Access } from "payload";
 import { CollectionConfig } from "payload";
+
+const isOwnerOrAdminOrNoUser: Access = ({ req, data }) => {
+  if(!data.user) return true;
+  if(req.user?.role === "admin") return true;
+  if(req.user?.id === data.user?.id) return true;
+  return false;
+}
 
 export const UsersCart: CollectionConfig = {
   slug: "users-cart",
@@ -7,8 +15,9 @@ export const UsersCart: CollectionConfig = {
     hidden: true,
   },
   access: {
-    read: ({ req: { user } }) => !!user, // Restrict cart access to logged-in users
-    update: ({ req: { user } }) => !!user,
+    read: isOwnerOrAdminOrNoUser,
+    create: isOwnerOrAdminOrNoUser,
+    update: isOwnerOrAdminOrNoUser,
   },
   fields: [
     {
