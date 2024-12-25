@@ -7,26 +7,15 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHe
 import Link from 'next/link'
 import { formatNairaPrice } from '@/lib/helpers'
 import Image from 'next/image'
+import { useCart } from './cart-context'
 
  
 export default function Cart() {
-  const { mutate: onAddItem } = useAddItem()
-  const { mutate: onRemoveItem } = useRemoveItem()
-  const { data: cart } = useGetCart()
+  // const { data: cart } = useGetCart()
+  const { cart, addCartItem, deleteCartItem } = useCart()
   
   console.log("Cart: ", cart)
 
-  const getTotal = (cart: UsersCart | null | undefined) => {
-    if (!cart) return 0
-    return cart.total || cart.items?.reduce((acc, item) => {
-      if (typeof item.product === 'object' && item.product !== null) {
-        const variant = item.product.variantInventory?.find(v => v.id === item.variantId)
-        return acc + (variant?.price! * item.quantity)
-      }
-      return acc
-    }, 0)
-  }
-  
   const totalCartItems = cart?.items?.length || 0
   // get total price of all items in the cart
 
@@ -74,7 +63,7 @@ export default function Cart() {
                       </p>
                       <div className="flex items-center mt-1">
                         <button
-                          onClick={() => onRemoveItem({ itemId: item.id!, removeCompletely: false })}
+                          onClick={() => deleteCartItem(item.id!, false)}
                           className="text-gray-500 hover:text-gray-700"
                         >
                           -
@@ -83,7 +72,7 @@ export default function Cart() {
                         <button
                           onClick={() => {
                             if (typeof item.product === 'object' && item.product !== null && item.variantId) {
-                              onAddItem({ selectedVariantId: item.variantId, product: item.product })
+                              addCartItem(item.variantId, item.product)
                             }
                           }}
                           className="text-gray-500 hover:text-gray-700"
@@ -96,7 +85,7 @@ export default function Cart() {
                   <div className="text-right">
                     <p className="font-medium">{formatNairaPrice(variant?.price! * item.quantity)}</p>
                     <button
-                      onClick={() => onRemoveItem({ itemId: item.id!, removeCompletely: true })}
+                      onClick={() => deleteCartItem(item.id!, true)}
                       className="text-sm text-red-500 hover:text-red-700"
                     >
                       Remove
@@ -110,7 +99,7 @@ export default function Cart() {
         <SheetFooter className="border-t flex flex-col ">
             <div className="flex justify-between items-center my-4">
               <span className="font-semibold">Total</span>
-              <span className="font-semibold">{formatNairaPrice(getTotal(cart) || 0)}</span>
+              <span className="font-semibold">{formatNairaPrice((cart.total ?? 0) )}</span>
             </div>
             <SheetClose asChild>
             <Button className="w-full mt-2 mb-6" disabled={cart.items?.length === 0}>
