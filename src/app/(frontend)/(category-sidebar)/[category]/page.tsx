@@ -4,7 +4,11 @@ import { notFound } from "next/navigation"
 
 export async function generateStaticParams() {
     const { docs: categories } = await payload.find({
-        collection: 'categories'
+        collection: 'categories',
+        depth: 0,
+        select: {
+            slug: true
+        }
     })
     if(!categories) {
         return []
@@ -14,19 +18,13 @@ export async function generateStaticParams() {
     }))
 }
 
-const Categories = async (props: {
-    params: Promise<{
-        category: string
-    }>
-}) => {
-    const { category } = await props.params
-    const urlDecoded = decodeURIComponent(category)
-    console.log("URL decoded: ", urlDecoded)
+const Categories = async ({ params }: {params: Promise<{slug: string}>}) => {
+    const { slug } = await params
     const { docs: categories } = await payload.find({
         collection: 'categories',
         where: {
             slug: {
-                equals: urlDecoded
+                equals: slug
             }
         }
     })
