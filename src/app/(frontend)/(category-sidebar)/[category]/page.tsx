@@ -21,6 +21,7 @@ const Categories = async (props: {
 }) => {
     const { category } = await props.params
     const urlDecoded = decodeURIComponent(category)
+    console.log("URL decoded: ", urlDecoded)
     const { docs: categories } = await payload.find({
         collection: 'categories',
         where: {
@@ -29,6 +30,7 @@ const Categories = async (props: {
             }
         }
     })
+    console.log(categories)
     const [cat] = categories
     if(!cat) {
         return notFound()

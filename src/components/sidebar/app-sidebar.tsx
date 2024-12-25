@@ -77,7 +77,7 @@ export function AppSidebar({
                                 asChild
                                 isActive={pathname.includes(category.slug)} 
                               >
-                                <a href={category.slug}
+                                <a href={`/${category.slug}`}
                                 className="truncate"
                                 >{category.name}</a>
                               </SidebarMenuSubButton>
