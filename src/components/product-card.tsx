@@ -9,13 +9,13 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const { title, image, priceRange, slug, category } = product
+  const { title, images, priceRange, slug, category } = product
   
-  if(!title || !image || !priceRange || !slug || !category) return null
+  if(!title || !images || !priceRange || !slug || !category) return null
 
-  const imageUrl = typeof image === "number" 
+  const imageUrl = typeof images[0] === "number" 
   ? "/placeholder.png"
-  : image.thumbnailURL ?? "/placeholder.png"
+  : images[0].thumbnailURL ?? "/placeholder.png"
   // Format the price, or use a placeholder if price is undefined
  
 
