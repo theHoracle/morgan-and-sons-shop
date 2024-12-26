@@ -19,34 +19,47 @@ export async function generateStaticParams() {
 }
 
 const Categories = async ({ params }: {params: Promise<{category: string}>}) => {
-    const slug = await params
-    console.log("params: ", slug)
-
+    const { category } = await params
     const { docs: categories } = await payload.find({
         collection: 'categories',
-        where: { slug: { equals: slug.category }},
-        depth: 2,
+        where: { slug: { equals: category }},
+        depth: 0,
     })
-    console.log(categories)
-    const [cat] = categories
-    if(!cat) {
+    if(categories.length === 0) {
         return notFound()
     }
-    const amount = cat.products?.docs?.length || 0
+    const  { docs: products } = await payload.find({
+        collection: 'products',
+        where: {
+            category: {
+                equals: categories[0].id
+            } 
+        },
+        select: {
+            title: true,
+            slug: true,
+            priceRange: true,
+            image: true,
+            category: true
+        },
+        depth: 1,
+    })
+    console.dir(products)
+   
+    const amount = products?.length || 0
 
     return (
         <div>
             <h1
             className="flex items-end justify-between w-full text-2xl font-semibold tracking-tighter leading-tight"
-            >{cat.name}
+            >{categories[0].name}
             <p className='text-xs font-light tracking-normal lowercase'>{amount} {amount === 1 ? 'Product' : 'Products'}</p>
             </h1>
             <hr className='mt-1 w-full stroke-neutral-700' />
-            
+           
             <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 py-1'>
-            {cat.products?.docs?.filter(product => typeof product !== 'number').map((product) => (
+            {products?.filter(product => typeof product !== 'number').map((product) => (
                     <ProductCard 
-                    categoryObj={cat}
                     product={product} 
                     key={product.id} />
             ))}

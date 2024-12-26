@@ -43,5 +43,11 @@ export const Media: CollectionConfig = {
       name: 'alt',
       type: 'text',
     },
+    {
+      name: "productImages",
+      type: "join",
+      collection: "products",
+      on: "images",
+    }
   ],
 };

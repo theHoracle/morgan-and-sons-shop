@@ -175,10 +175,11 @@ export const Products: CollectionConfig = {
       hasMany: false,
     },
     {
-      name: "image",
-      type: "upload",
+      name: "images",
+      type: "relationship",
       relationTo: "media",
-      required: true,
+      required: false,
+      hasMany: true,
     },
   ],
   hooks: {

@@ -23,6 +23,9 @@ export interface Config {
     'payload-migrations': PayloadMigration;
   };
   collectionsJoins: {
+    media: {
+      productImages: 'products';
+    };
     menus: {
       categories: 'categories';
     };
@@ -99,6 +102,10 @@ export interface User {
 export interface Media {
   id: number;
   alt?: string | null;
+  productImages?: {
+    docs?: (number | Product)[] | null;
+    hasNextPage?: boolean | null;
+  } | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -136,36 +143,6 @@ export interface Media {
       filename?: string | null;
     };
   };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "menus".
- */
-export interface Menu {
-  id: number;
-  title: string;
-  categories?: {
-    docs?: (number | Category)[] | null;
-    hasNextPage?: boolean | null;
-  } | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories".
- */
-export interface Category {
-  id: number;
-  name: string;
-  slug: string;
-  products?: {
-    docs?: (number | Product)[] | null;
-    hasNextPage?: boolean | null;
-  } | null;
-  menu: number | Menu;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -214,7 +191,37 @@ export interface Product {
       }[]
     | null;
   category: number | Category;
-  image: number | Media;
+  images?: (number | Media)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: number;
+  name: string;
+  slug: string;
+  products?: {
+    docs?: (number | Product)[] | null;
+    hasNextPage?: boolean | null;
+  } | null;
+  menu: number | Menu;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "menus".
+ */
+export interface Menu {
+  id: number;
+  title: string;
+  categories?: {
+    docs?: (number | Category)[] | null;
+    hasNextPage?: boolean | null;
+  } | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -351,6 +358,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  productImages?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -469,7 +477,7 @@ export interface ProductsSelect<T extends boolean = true> {
         inventoryQuantity?: T;
       };
   category?: T;
-  image?: T;
+  images?: T;
   updatedAt?: T;
   createdAt?: T;
 }
