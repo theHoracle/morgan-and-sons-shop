@@ -18,7 +18,7 @@ export async function generateStaticParams() {
     }))
 }
 
-const Categories = async ({ params }: {params: Promise<{category: string}>}) => {
+const CategoryPage = async ({ params }: {params: Promise<{category: string}>}) => {
     const { category } = await params
     const { docs: categories } = await payload.find({
         collection: 'categories',
@@ -39,7 +39,7 @@ const Categories = async ({ params }: {params: Promise<{category: string}>}) => 
             title: true,
             slug: true,
             priceRange: true,
-            image: true,
+            images: true,
             category: true
         },
         depth: 1,
@@ -60,8 +60,8 @@ const Categories = async ({ params }: {params: Promise<{category: string}>}) => 
             <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 py-1'>
             {products?.filter(product => typeof product !== 'number').map((product) => (
                     <ProductCard 
-                    product={product} 
-                    key={product.id} />
+                        product={product} 
+                        key={product.id} />
             ))}
             </div>
             
@@ -69,4 +69,4 @@ const Categories = async ({ params }: {params: Promise<{category: string}>}) => 
     )
 }
 
-export default Categories
+export default CategoryPage;
