@@ -7,7 +7,7 @@ const Page = async () => {
     const { docs: categories } = await payload.find({
         collection: 'categories', 
         depth: 0, 
-     })
+    })
 
      console.dir("Categories: ", categories)
     return <div className="space-y-4">
@@ -23,10 +23,10 @@ const Page = async () => {
                 {/* display products in category */}
                 <Suspense fallback={
                     <div className='grid grid-cols-4 gap-2 w-full'>
-                        <Skeleton className='rounded-lg py-1' />
-                        <Skeleton className='rounded-lg py-1' />
-                        <Skeleton className='rounded-lg py-1' />
-                        <Skeleton className='rounded-lg py-1' />
+                        <Skeleton className='rounded-lg h-44 py-1' />
+                        <Skeleton className='rounded-lg h-44 py-1' />
+                        <Skeleton className='rounded-lg h-44 py-1' />
+                        <Skeleton className='rounded-lg h-44 py-1' />
                     </div>
                 }>
                 {category.id && <CategoryCarousel categoryId={category.id} />}

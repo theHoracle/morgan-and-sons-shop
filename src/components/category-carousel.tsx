@@ -12,13 +12,6 @@ const CategoryCarousel = async (props: {
                 equals: categoryId
             } 
         },
-        select: {
-            title: true,
-            slug: true,
-            priceRange: true,
-            image: true,
-            category: true
-        },
         depth: 1,
         limit: 6
     })

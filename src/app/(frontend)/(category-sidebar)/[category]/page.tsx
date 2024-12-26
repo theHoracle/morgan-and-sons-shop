@@ -6,9 +6,7 @@ export async function generateStaticParams() {
     const { docs: categories } = await payload.find({
         collection: 'categories',
         depth: 0,
-        select: {
-            slug: true
-        }
+        select: { slug: true }
     })
     if(categories.length === 0) {
         return []
@@ -20,6 +18,9 @@ export async function generateStaticParams() {
 
 const CategoryPage = async ({ params }: {params: Promise<{category: string}>}) => {
     const { category } = await params
+    if(!category) {
+        return notFound()
+    }
     const { docs: categories } = await payload.find({
         collection: 'categories',
         where: { slug: { equals: category }},
@@ -30,22 +31,10 @@ const CategoryPage = async ({ params }: {params: Promise<{category: string}>}) =
     }
     const  { docs: products } = await payload.find({
         collection: 'products',
-        where: {
-            category: {
-                equals: categories[0].id
-            } 
-        },
-        select: {
-            title: true,
-            slug: true,
-            priceRange: true,
-            images: true,
-            category: true
-        },
+        where: { category: { equals: categories[0].id } },
         depth: 1,
     })
-    console.dir(products)
-   
+    // products amount
     const amount = products?.length || 0
 
     return (

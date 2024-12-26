@@ -11,7 +11,7 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   const { title, images, priceRange, slug, category } = product
   
-  if(!title || !images || !priceRange || !slug || !category) return null
+  if(!title || !Array.isArray(images) || !priceRange || !slug || !category) return null
 
   const imageUrl = typeof images[0] === "number" 
   ? "/placeholder.png"
