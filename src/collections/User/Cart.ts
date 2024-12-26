@@ -2,7 +2,7 @@ import { Access } from "payload";
 import { CollectionConfig } from "payload";
 
 const isOwnerOrAdminOrNoUser: Access = ({ req, data }) => {
-  if(!data.user) return true;
+  if(!(data?.user)) return true;
   if(req.user?.role === "admin") return true;
   if(req.user?.id === data.user?.id) return true;
   return false;

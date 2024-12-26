@@ -7,9 +7,6 @@ export const Media: CollectionConfig = {
     delete: ({ req }) => req.user?.role === "admin",
     update: ({ req }) => req.user?.role === "admin",
   },
-  admin: {
-    hidden: ({ user }) => user?.role === "user",
-  },
   upload: {
     staticDir: "media",
     disableLocalStorage: true,
