@@ -14,9 +14,9 @@ export async function generateMetadata({
         }})
     const indexable = true
     const [product] = products
-    if (!product || typeof product.image === 'number') return notFound()
+    if (!product || !product.images) return notFound()
 
-    const { width, height, url, alt } =  product.image
+    const { width, height, url, alt } = typeof product.images[0] !== "number" ? product.images[0] : {} 
     return {
         title: product.title,
         description: product.description,

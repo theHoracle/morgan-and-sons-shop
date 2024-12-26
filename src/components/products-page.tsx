@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { Minus, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel'
-import { Product } from '@/payload-types'
+import { Media, Product } from '@/payload-types'
 import { AddToCart } from '@/components/cart/add-to-cart'
 import { formatNairaPrice } from '@/lib/helpers'
 
@@ -16,9 +16,9 @@ const ProductPage = (props: { product: Product }) => {
   const [selectedSize, setSelectedSize] = useState<string | null>(product.variantInventory?.[0]?.size || null)
   const [selectedColor, setSelectedColor] = useState<string | null>(product.variantInventory?.[0]?.color || null)
 
-  const images = Array.isArray(product.image) ? product.image : [product.image]
+  const images: Media[] = Array.isArray(product.images) ? product.images.filter((img): img is Media => typeof img !== 'number') : []
 
-  // Get unique sizes and colors from variants
+  // Get unique sizes and colors from variant
   const sizes = Array.from(new Set(product.variantInventory?.map(v => v.size) || []))
   const colors = Array.from(new Set(product.variantInventory?.map(v => v.color) || []))
 
@@ -50,8 +50,8 @@ const ProductPage = (props: { product: Product }) => {
             <div className="hidden lg:block">
               <div className="relative aspect-square overflow-hidden rounded-2xl shadow-lg">
                 <Image
-                  src={images[selectedImage].url}
-                  alt={images[selectedImage].alt}
+                  src={images[selectedImage].url ?? "/placeholder.png"}
+                  alt={images[selectedImage].alt ?? "image placeholder"}
                   layout="fill"
                   objectFit="cover"
                   className="transition-all duration-300 ease-in-out transform hover:scale-105"
@@ -67,9 +67,9 @@ const ProductPage = (props: { product: Product }) => {
                     }`}
                   >
                     <Image
-                      src={image.url}
-                      alt={image.alt}
-                      layout="fill"
+                      src={image.url ?? "/placeholder.png"}
+                      alt={image.alt ?? "image placeholder"}
+                      fill
                       objectFit="cover"
                       className="transition-all duration-300 ease-in-out transform hover:scale-110"
                     />
@@ -85,8 +85,8 @@ const ProductPage = (props: { product: Product }) => {
                     <CarouselItem key={index}>
                       <div className="relative aspect-square overflow-hidden rounded-xl">
                         <Image
-                          src={image.url}
-                          alt={image.alt}
+                          src={image.url ?? "/placeholder.png"}
+                          alt={image.alt ?? "image placeholder"}
                           layout="fill"
                           objectFit="cover"
                         />

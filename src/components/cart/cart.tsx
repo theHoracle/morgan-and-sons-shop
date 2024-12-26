@@ -46,7 +46,9 @@ export default function Cart() {
               const variant = item.product.variantInventory?.find(v => v.id === item.variantId)
               
               // make variant image later
-              const productImage = typeof item.product.image === "object" ? (item.product.image.thumbnailURL ?? "placeholder.png") : "/placeholder.png"
+              const productImage =  item.product.images && typeof item.product.images === "object" && typeof item.product.images[0] === "object"
+                    ? (item.product.images[0].thumbnailURL ?? "placeholder.png") 
+                    : "/placeholder.png"
               return (
                 <div key={item.id} className="flex items-center justify-between py-4 border-b">
                   <div className='flex gap-4 items-center'>
@@ -96,15 +98,15 @@ export default function Cart() {
             })
           )}
         </div>
-        <SheetFooter className="border-t flex flex-col ">
-            <div className="flex justify-between items-center my-4">
+        <SheetFooter className="border-t flex !flex-col items-center">
+            <div className="flex justify-between items-center my-4 px-2 w-full">
               <span className="font-semibold">Total</span>
               <span className="font-semibold">{formatNairaPrice((cart.total ?? 0) )}</span>
             </div>
             <SheetClose asChild>
-            <Button className="w-full mt-2 mb-6" disabled={cart.items?.length === 0}>
-              Proceed to Checkout
-            </Button>
+              <Button className="w-full !mr-2 mt-2 mb-6" disabled={cart.items?.length === 0}>
+                Proceed to Checkout
+              </Button>
             </SheetClose>
         </SheetFooter>
       </div> : <div className="flex flex-col h-full items-center justify-center gap-4">
