@@ -17,26 +17,29 @@ const CheckOutPage = async () => {
     if(!cart) return notFound()
     
     return (
-        <div className="h-screen w-screen" >
-            <header className="flex items-center justify-between w-screen px-4 h-16 border-b shadow-sm">
-                <h1 className="text-2xl font-extrabold leading-tight tracking-tight">M&S</h1>
-                <div className="flex items-center gap-2">
-                    <Link href="/contact"
-                    className={cn(buttonVariants({ variant: "ghost" }), "flex items-center gap-2")}>
-                        Contact us 
-                    </Link>
-                    <Separator orientation="vertical" className="h-8" />
-                    <Link href="/" 
-                    className={cn(buttonVariants({ variant: "link" }), "flex items-center gap-2")}>
-                        Continue shopping <ArrowRight size={16} />
-                    </Link>
+        <div className="relative h-screen w-screen flex flex-col items-center" >
+            <header className="flex flex-col items-center w-screen px-4 h-16 border-b shadow-sm">
+                <div className="flex items-center justify-between max-w-4xl h-full">
+                    <h1 className="text-2xl font-extrabold leading-tight tracking-tight">M&S</h1>
+                    <div className="flex items-center gap-2">
+                        <Link href="/contact"
+                        className={cn(buttonVariants({ variant: "ghost" }), "flex items-center gap-2")}>
+                            Contact us 
+                        </Link>
+                        <Separator orientation="vertical" className="h-8" />
+                        <Link href="/" 
+                        className={cn(buttonVariants({ variant: "link" }), "flex items-center gap-2")}>
+                            Continue shopping <ArrowRight size={16} />
+                        </Link>
+                    </div>
                 </div>
             </header>
-            <div className="flex w-full md:mx-10 max-w-3xl mx-auto flex-col-reverse md:grid md:grid-cols-3 gap-8">
-            <div className="col-span-2 w-full ">
-            <h1 className="text-2xl font-bold tracking-tight py-4 leading-tight">
+            <div className="max-w-4xl mx-4">
+            <h1 className="text-2xl font-bold tracking-tight leading-tight">
                 Checkout
             </h1>
+            <div className="flex w-full md:mx-10  flex-col-reverse md:grid md:grid-cols-3 gap-8">
+            <div className="col-span-2 w-full ">
             <div className="flex flex-col space-y-4">
                 <Card>
                     <CardHeader>
@@ -74,7 +77,7 @@ const CheckOutPage = async () => {
                 </Card>
             </div>
             </div>
-            <div className="col-span-1 w-full">
+            <div className="col-span-1 w-full md:mt-20">
                 <Card>
                     <CardHeader>
                         <CardTitle>Order Summary</CardTitle>
@@ -105,6 +108,7 @@ const CheckOutPage = async () => {
                       </div>
                     </CardContent>
                 </Card>
+            </div>
             </div>
             </div>
         </div>
