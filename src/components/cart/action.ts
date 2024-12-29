@@ -21,7 +21,7 @@ export const setCookieCart = async (cartId: string | number) => {
     (await cookies()).set(COOKIE_CART_KEY, cartId.toString());
 };
 
-const getCartById = async (cartId: string) => (
+export const getCartById = async (cartId: string) => (
     await payload.findByID({
         collection: "users-cart",
         id: cartId

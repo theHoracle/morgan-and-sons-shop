@@ -1,6 +1,13 @@
-import { addItem, getCart, removeItem, createCart } from "@/components/cart/action"
+import { addItem, getCart, removeItem, createCart, getCartById } from "@/components/cart/action"
 import { useCart } from "@/components/cart/cart-context"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+
+export const useGetCartWithId = (cartId: string) => {
+    return useQuery({
+        queryKey: ['cart', cartId],
+        queryFn: () => getCartById(cartId),
+    })
+}
 
 export const useGetCart = () => {
     return useQuery({

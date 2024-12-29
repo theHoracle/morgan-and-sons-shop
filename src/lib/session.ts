@@ -1,5 +1,4 @@
 import { cookies, headers as nextHeaders } from "next/headers"
-import { payload } from "@/payload";
 import { NextRequest } from "next/server";
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 import { User } from "@/payload-types";
@@ -36,11 +35,6 @@ export const getServerSideUser = async (
   return { user };
 };
 
-export async function getUser() {
-  const headers = await nextHeaders()
-  const { user } = await payload.auth({ headers })
-  return user
-}
 
 export async function logoutUser() {
   (await cookies()).delete("JWTSession")

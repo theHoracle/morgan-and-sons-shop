@@ -24,7 +24,7 @@ const mockCart: UsersCart = {
                 ],
                 inventoryQuantity: 100,
                 category: 1,
-                image: 1,
+                images: [1],
                 updatedAt: '2023-01-01T00:00:00Z',
                 createdAt: '2023-01-01T00:00:00Z',
             },
@@ -56,18 +56,10 @@ describe('Cart Component', () => {
         expect(screen.getByText('Your cart is empty')).toBeInTheDocument()
     })
 
-    it('calls onClose when close button is clicked', () => {
-        const onClose = jest.fn()
-        render(<Cart />)
-        
-        fireEvent.click(screen.getByRole('button', { name: /close/i }))
-        expect(onClose).toHaveBeenCalled()
-    })
-
     it('calls onAddItem when add button is clicked', () => {
         const { useAddItem } = require('@/hooks/cart')
         const addItemMock = useAddItem().mutate
-        render(<Cart isOpen={true} onClose={jest.fn()} cart={mockCart} />)
+        render(<Cart />)
         
         fireEvent.click(screen.getByText('+'))
         expect(addItemMock).toHaveBeenCalledWith({ selectedVariantId: 'variant1', product: mockCart.items?.[0]?.product })
@@ -76,7 +68,7 @@ describe('Cart Component', () => {
     it('calls onRemoveItem when remove button is clicked', () => {
         const { useRemoveItem } = require('@/hooks/cart')
         const removeItemMock = useRemoveItem().mutate
-        render(<Cart isOpen={true} onClose={jest.fn()} cart={mockCart} />)
+        render(<Cart />)
         
         fireEvent.click(screen.getByText('-'))
         expect(removeItemMock).toHaveBeenCalledWith({ itemId: '1', removeCompletely: false })
