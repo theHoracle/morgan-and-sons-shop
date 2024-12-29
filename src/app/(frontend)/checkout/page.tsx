@@ -1,7 +1,11 @@
 import { getCartById, getCookieCart } from "@/components/cart/action"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
 import { formatNairaPrice } from "@/lib/helpers"
+import { cn } from "@/lib/utils"
+import { ArrowRight } from "lucide-react"
+import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 
 const CheckOutPage = async () => {
@@ -13,10 +17,24 @@ const CheckOutPage = async () => {
     if(!cart) return notFound()
     
     return (
-        <div >
-            <div className="flex flex-col-reverse md:grid md:grid-cols-3 gap-8">
-            <div className="col-span-2 w-dull">
-            <h1 className="text-2xl font-bold tracking-tight leading-tight">
+        <div className="h-screen w-screen" >
+            <header className="flex items-center justify-between w-screen px-4 h-16 border-b shadow-sm">
+                <h1 className="text-2xl font-extrabold leading-tight tracking-tight">M&S</h1>
+                <div className="flex items-center gap-2">
+                    <Link href="/contact"
+                    className={cn(buttonVariants({ variant: "ghost" }), "flex items-center gap-2")}>
+                        Contact us 
+                    </Link>
+                    <Separator orientation="vertical" className="h-8" />
+                    <Link href="/" 
+                    className={cn(buttonVariants({ variant: "link" }), "flex items-center gap-2")}>
+                        Continue shopping <ArrowRight size={16} />
+                    </Link>
+                </div>
+            </header>
+            <div className="flex w-full md:mx-10 max-w-3xl mx-auto flex-col-reverse md:grid md:grid-cols-3 gap-8">
+            <div className="col-span-2 w-full ">
+            <h1 className="text-2xl font-bold tracking-tight py-4 leading-tight">
                 Checkout
             </h1>
             <div className="flex flex-col space-y-4">
