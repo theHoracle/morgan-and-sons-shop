@@ -233,8 +233,18 @@ export interface Order {
   id: number;
   user: number | User;
   order: number | UsersCart;
+  deliveryDetails?:
+    | {
+        fullname?: string | null;
+        address?: string | null;
+        paymentType?: ('paystack' | 'onDelivery') | null;
+        shipmentType?: ('delivery' | 'pickup') | null;
+        id?: string | null;
+      }[]
+    | null;
+  deliveryDate?: string | null;
   status: 'pending' | 'shipped' | 'delivered';
-  paymentId?: string | null;
+  referenceId: string;
   paymentStatus: 'pending' | 'paid';
   updatedAt: string;
   createdAt: string;
@@ -488,8 +498,18 @@ export interface ProductsSelect<T extends boolean = true> {
 export interface OrdersSelect<T extends boolean = true> {
   user?: T;
   order?: T;
+  deliveryDetails?:
+    | T
+    | {
+        fullname?: T;
+        address?: T;
+        paymentType?: T;
+        shipmentType?: T;
+        id?: T;
+      };
+  deliveryDate?: T;
   status?: T;
-  paymentId?: T;
+  referenceId?: T;
   paymentStatus?: T;
   updatedAt?: T;
   createdAt?: T;

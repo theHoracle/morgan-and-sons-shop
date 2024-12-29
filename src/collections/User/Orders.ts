@@ -24,6 +24,52 @@ export const Orders: CollectionConfig = {
             },
         },
         {
+            name: "deliveryDetails",
+            type: "array",
+            fields: [
+                {
+                    name: "fullname",
+                    type: "text"
+                },
+                {
+                    name: "address",
+                    type: "text",
+                },
+                {
+                    name: "paymentType",
+                    type: "select",
+                    options: [
+                        {
+                            label: "Paystack",
+                            value: "paystack"
+                        },
+                        {
+                            label: "Pay on delivery",
+                            value: "onDelivery"
+                        },
+                    ]
+                },
+                {
+                    name: "shipmentType",
+                    type: "select",
+                    options: [
+                        {
+                            label: "Delivery",
+                            value: "delivery"
+                        },
+                        {
+                            label: "Pickup",
+                            value: "pickup"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            name: "deliveryDate",
+            type: "text"
+        },
+        {
             name: 'status',
             type: 'select',
             options: [
@@ -44,8 +90,12 @@ export const Orders: CollectionConfig = {
             required: true
         },
         {
-            name: 'paymentId',
+            name: 'referenceId',
             type: 'text',
+            required: true,
+            access: {
+                update: () => false
+            },
         },
         {
             name: 'paymentStatus',
