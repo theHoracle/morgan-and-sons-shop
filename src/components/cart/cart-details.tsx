@@ -36,6 +36,7 @@ const CartDetails = ({  cart }: CartDetailsProps) => {
                   <button
                     onClick={() => deleteCartItem(item.id!, false)}
                     className="text-gray-500 hover:text-gray-700"
+                    disabled={item.quantity === 1}
                   >
                     -
                   </button>

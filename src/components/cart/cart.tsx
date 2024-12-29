@@ -1,20 +1,19 @@
 "use client"
 import { ShoppingCart, X } from 'lucide-react'
 import { Button, buttonVariants } from '@/components/ui/button'
-import { useAddItem, useGetCart, useRemoveItem } from '@/hooks/cart'
-import { UsersCart } from '@/payload-types'
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '../ui/sheet'
 import Link from 'next/link'
 import { formatNairaPrice } from '@/lib/helpers'
 import Image from 'next/image'
 import { useCart } from './cart-context'
 import CartDetails from './cart-details'
+import { useRouter } from 'next/navigation'
 
  
 export default function Cart() {
   // const { data: cart } = useGetCart()
-  const { cart } = useCart()
-  
+  const { cart } = useCart();
+  const router = useRouter()
   console.log("Cart: ", cart)
 
   const totalCartItems = cart?.items?.length || 0
@@ -50,7 +49,10 @@ export default function Cart() {
               <span className="font-semibold">{formatNairaPrice((cart.total ?? 0) )}</span>
             </div>
             <SheetClose asChild>
-              <Button className="w-full !mr-2 mt-2 mb-6" disabled={cart.items?.length === 0}>
+              <Button className="w-full !mr-2 mt-2 mb-6" 
+              disabled={cart.items?.length === 0}
+              onClick={() => router.push('/checkout')}
+              >
                 Proceed to Checkout
               </Button>
             </SheetClose>
