@@ -114,7 +114,7 @@ export const addItem = async ({
             ...currentCart,
             items: updatedItems,
         };
-        console.dir(updatedCart);
+
         await payload.update({
                 collection: "users-cart",
                 id: currentCart.id,

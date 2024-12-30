@@ -36,7 +36,7 @@ export const useAddItem = () => {
         onMutate: async ({selectedVariantId, product, quantity}) => {
             addCartItem(selectedVariantId, product, quantity);
         },
-        onSuccess: () => {
+        onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['cart'] });
         },
     });
@@ -51,7 +51,7 @@ export const useRemoveItem = () => {
         onMutate: async ({itemId, removeCompletely}) => {
             deleteCartItem(itemId, removeCompletely);
         },
-        onSuccess: () => {
+        onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['cart'] });
         },
     });

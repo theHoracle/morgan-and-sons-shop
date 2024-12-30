@@ -4,6 +4,8 @@ import { Product } from "@/payload-types";
 import clsx from "clsx";
 import { PlusIcon } from "lucide-react";
 import { useCart } from "./cart-context";
+import { useActionState } from "react";
+import { addItem } from "./action";
 
 function SubmitButton({
     availableForSale,
@@ -58,13 +60,12 @@ function SubmitButton({
 
 export function AddToCart({ product, selectedVariantId }: { product: Product, selectedVariantId: string }) {
     const { variantInventory } = product;
-    const { addCartItem } = useCart();
+    const { mutate: addCartItem } = useAddItem();
     const availableForSale = variantInventory?.some((variant) => variant.inventoryQuantity ? variant.inventoryQuantity > 0 : false) || false;
-  
+    
     const handleSubmit = (event: React.FormEvent) => {
       event.preventDefault();
-      addCartItem(selectedVariantId, product);
-      
+      addCartItem({selectedVariantId, product}); 
     };
   
     return (

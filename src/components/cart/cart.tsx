@@ -8,23 +8,24 @@ import { formatNairaPrice } from '@/lib/helpers'
 import Image from 'next/image'
 import { useCart } from './cart-context'
 import { UsersCart } from '@/payload-types'
+import { useAddItem, useRemoveItem } from '@/hooks/cart'
 
  
 export default function Cart() {
   // const { data: cart } = useGetCart()
-  const { cart, addCartItem, deleteCartItem } = useCart()
-  
+  const { cart } = useCart()
+  const { mutate: addCartItem } = useAddItem();
+  const { mutate: deleteCartItem } = useRemoveItem()
   console.log("Cart: ", cart)
 
-  const totalCartItems = cart?.items?.length || 0
-  // get total price of all items in the cart
+  const totalCartItems = cart?.items?.length || 0;
 
   return ( <Sheet>
     <SheetTrigger asChild>
-      <div className="relative p-2 text-gray-600 hover:text-gray-900">
-      <ShoppingCart size={24} />
+      <div className="relative flex h-11 w-11 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors dark:border-neutral-700-- dark:text-white--">
+      <ShoppingCart className='h-4 transition-all ease-in-out hover:scale-110' />
       {totalCartItems > 0 && (
-        <span className="absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+        <span className="absolute top-0 right-0 -mr-2 -mt-2 h-4 w-4 rounded bg-red-600 text-[11px] font-medium text-white">
           {totalCartItems}
         </span>
       )}
@@ -65,7 +66,9 @@ export default function Cart() {
                       </p>
                       <div className="flex items-center mt-1">
                         <button
-                          onClick={() => deleteCartItem(item.id!, false)}
+                          onClick={() => deleteCartItem({
+                            itemId: item.id!, 
+                            removeCompletely: false})}
                           className="text-gray-500 hover:text-gray-700"
                         >
                           -
@@ -74,7 +77,9 @@ export default function Cart() {
                         <button
                           onClick={() => {
                             if (typeof item.product === 'object' && item.product !== null && item.variantId) {
-                              addCartItem(item.variantId, item.product)
+                              addCartItem({
+                               selectedVariantId: item.variantId,
+                               product: item.product})
                             }
                           }}
                           className="text-gray-500 hover:text-gray-700"
@@ -87,7 +92,10 @@ export default function Cart() {
                   <div className="text-right">
                     <p className="font-medium">{formatNairaPrice(variant?.price! * item.quantity)}</p>
                     <button
-                      onClick={() => deleteCartItem(item.id!, true)}
+                      onClick={() => deleteCartItem({
+                        itemId: item.id!, 
+                        removeCompletely: true
+                      })}
                       className="text-sm text-red-500 hover:text-red-700"
                     >
                       Remove
