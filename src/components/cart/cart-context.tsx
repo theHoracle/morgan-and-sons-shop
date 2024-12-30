@@ -77,7 +77,7 @@ function cartReducer(state: UsersCart | undefined, action: CartAction): UsersCar
       updatedItems = currentCart.items ? currentCart.items
         .map((item) =>
           item.product && typeof item.product !== 'number' && item.id === itemId
-            ? { ...item, quantity: item.quantity - 1 }
+            ? item.quantity >= 1 ? { ...item, quantity: item.quantity - 1 } : null
             : item).filter(
                 (item): item is NonNullable<CartItem> => item !== null) 
                 : [];

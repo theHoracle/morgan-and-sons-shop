@@ -2,18 +2,18 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { OrderSummary } from "./order-summary"
-import { UsersCart } from "@/payload-types"
 import { Input } from "../ui/input";
 import { useState } from "react";
+import { useCart } from "../cart/cart-context";
 
 export function CheckoutDetails(props: {
-    cart: UsersCart
+    
 }) {
-    const { cart } = props;
+const { cart } = useCart();
     const [name, setName] = useState("")
     return (
         <div className="flex w-full flex-col-reverse md:grid md:grid-cols-3 gap-8">
-            <div className="col-span-2 w-full ">
+            <div className="col-span-2 w-full px-4 md:px-0">
             <div className="flex flex-col space-y-4">
                 <Card>
                     <CardHeader>

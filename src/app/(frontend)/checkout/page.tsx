@@ -10,12 +10,6 @@ import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 
 const CheckOutPage = async () => {
-    const PROCESSING_FEE = 1000;
-    const cartId = await getCookieCart()
-    if(!cartId) redirect("/")
-    
-    const cart = await getCartById(cartId)
-    if(!cart) return notFound()
     
     return (
         <div className="relative h-screen w-screen flex flex-col items-center" >
@@ -39,7 +33,7 @@ const CheckOutPage = async () => {
             <h1 className="text-2xl font-bold py-4 tracking-tight leading-tight">
                 Checkout
             </h1>
-            <CheckoutDetails cart={cart} />
+            <CheckoutDetails />
             </div>
         </div>
     )
