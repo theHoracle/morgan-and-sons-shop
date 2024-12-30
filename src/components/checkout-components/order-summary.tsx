@@ -33,14 +33,15 @@ export function OrderSummary(props: {
             unitAmount: cartTotal,
             fullName: fullName || '',
         })
-        if(response.success && response.sessionUrl) {
-            window.location.href = response.sessionUrl;
-            toast.success("Redirecting to payment provider...")
-            return;
-        }
-        if(!response.success) {
-            toast.error(response.error)
-            return;
+        if(response.success) {
+            if(response.sessionUrl) {
+                window.location.href = response.sessionUrl;
+                toast.success("Redirecting to payment provider...");
+            } else {
+                toast.error("Payment session URL is missing");
+            }
+        } else {
+            toast.error(response.error);
         }
 
     }
