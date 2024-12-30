@@ -12,7 +12,6 @@ export const UsersCart: CollectionConfig = {
   slug: "users-cart",
   admin: {
     group: "users",
-    hidden: true,
   },
   access: {
     read: isOwnerOrAdminOrNoUser,

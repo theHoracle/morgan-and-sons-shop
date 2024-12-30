@@ -9,6 +9,7 @@ import Image from 'next/image'
 import { useCart } from './cart-context'
 import { UsersCart } from '@/payload-types'
 import { useAddItem, useRemoveItem } from '@/hooks/cart'
+import { useRouter } from 'next/navigation'
 
  
 export default function Cart() {
@@ -17,6 +18,7 @@ export default function Cart() {
   const { mutate: addCartItem } = useAddItem();
   const { mutate: deleteCartItem } = useRemoveItem()
   console.log("Cart: ", cart)
+  const router = useRouter()
 
   const totalCartItems = cart?.items?.length || 0;
 
@@ -25,7 +27,7 @@ export default function Cart() {
       <div className="relative flex h-11 w-11 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors dark:border-neutral-700-- dark:text-white--">
       <ShoppingCart className='h-4 transition-all ease-in-out hover:scale-110' />
       {totalCartItems > 0 && (
-        <span className="absolute top-0 right-0 -mr-2 -mt-2 h-4 w-4 rounded bg-red-600 text-[11px] font-medium text-white">
+        <span className="absolute top-0 right-0 -mr-2 -mt-2 h-4 w-4 rounded-full flex items-center flex-col justify-center bg-red-600 text-[11px] font-medium text-white">
           {totalCartItems}
         </span>
       )}
@@ -112,7 +114,9 @@ export default function Cart() {
               <span className="font-semibold">{formatNairaPrice((cart.total ?? 0) )}</span>
             </div>
             <SheetClose asChild>
-              <Button className="w-full !mr-2 mt-2 mb-6" disabled={cart.items?.length === 0}>
+              <Button className="w-full !mr-2 mt-2 mb-6" 
+                onClick={() => router.push('/checkout')}
+                disabled={cart.items?.length === 0}>
                 Proceed to Checkout
               </Button>
             </SheetClose>

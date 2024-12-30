@@ -1,13 +1,10 @@
-import { getCartById, getCookieCart } from "@/components/cart/action"
 import { CheckoutDetails } from "@/components/checkout-components/checkout-details"
-import { OrderSummary } from "@/components/checkout-components/order-summary"
-import { Button, buttonVariants } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { buttonVariants } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
-import { notFound, redirect } from "next/navigation"
+
 
 const CheckOutPage = async () => {
     
@@ -21,15 +18,15 @@ const CheckOutPage = async () => {
                         className={cn(buttonVariants({ variant: "ghost" }), "flex items-center gap-2")}>
                             Contact us 
                         </Link>
-                        <Separator orientation="vertical" className="h-8" />
+                        <Separator orientation="vertical" className="h-8 hidden md:inline-block" />
                         <Link href="/" 
-                        className={cn(buttonVariants({ variant: "link" }), "flex items-center gap-2")}>
+                        className={cn(buttonVariants({ variant: "link" }), "items-center gap-2 hidden md:flex")}>
                             Continue shopping <ArrowRight size={16} />
                         </Link>
                     </div>
                 </div>
             </header>
-            <div className="w-screen max-w-4xl mx-4">
+            <div className="w-screen max-w-4xl px-4 mx-4">
             <h1 className="text-2xl font-bold py-4 tracking-tight leading-tight">
                 Checkout
             </h1>
