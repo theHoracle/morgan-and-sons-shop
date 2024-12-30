@@ -1,4 +1,4 @@
-"use server"
+"use client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { formatNairaPrice } from "@/lib/helpers"
 import { Button } from "../ui/button";

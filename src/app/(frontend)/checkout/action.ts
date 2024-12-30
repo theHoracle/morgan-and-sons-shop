@@ -54,7 +54,6 @@ export const createPaymentSession = async ({
             ],
         }
     })
-
     // get user details
     const user = typeof userCart.user === "number" 
             ? await payload.findByID({ collection: "users", id: userCart.user })
@@ -85,6 +84,4 @@ export const createPaymentSession = async ({
             error: 'Something went wrong: ' + (error instanceof Error ? error.message : '') 
         }
     }
-
-
 }
