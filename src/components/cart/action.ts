@@ -30,8 +30,6 @@ export const getCartById = async (cartId: string) => (
 
 // -- Fetch Cart or Create New Cart
 export const getCart = async () => {
-    // const headers = await nextHeaders();
-    // const { user } = await payload.auth({ headers });
     const nextCookies = await cookies();
     const { user } = await getServerSideUser(nextCookies)
 
@@ -201,11 +199,26 @@ export const mergeUsersCart = async ({ userId }: {userId: number}) => {
         payload.find({ collection: "users-cart", where: { user: { equals: userId } } })
     ])
     const [userCart] = usersCart
-    if(!guestCart?.items || !userCart || !userCart.items) return;
+    if(!userCart) {
+        const cart = await payload.create({
+            collection: "users-cart",
+            data: {
+                user: userId,
+                items: guestCart.items,
+                total: guestCart.total
+            }
+        })
+        await Promise.all([
+            payload.delete({ collection: "users-cart", id: guestCart.id }),
+            setCookieCart(cart.id)
+        ])
+        return;
+    }
+    if(!guestCart?.items && !userCart.items) return ( await setCookieCart(userCart.id) );
     
     // Merge carts
-    const updatedItems = [...guestCart.items]
-    userCart.items.forEach(userCartItem => {
+    const updatedItems = guestCart.items ? [...guestCart.items] : []
+    userCart.items?.forEach(userCartItem => {
         const existingItem = updatedItems.find(item => item.variantId === userCartItem.variantId)
         if(existingItem) {
             existingItem.quantity += userCartItem.quantity
@@ -213,10 +226,10 @@ export const mergeUsersCart = async ({ userId }: {userId: number}) => {
             updatedItems.push(userCartItem)
         }
     })
-    await payload.update({
-        collection: "users-cart",
-        id: userCart.id,
-        data: { items: updatedItems }
-    })
-
+    
+    await Promise.all([
+        payload.update({ collection: "users-cart", id: userCart.id, data: { items: updatedItems } }),
+        payload.delete({ collection: "users-cart", id: guestCart.id }),
+        setCookieCart(userCart.id),
+    ]) 
 }
