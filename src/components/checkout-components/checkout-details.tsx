@@ -2,23 +2,51 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { OrderSummary } from "./order-summary"
-import { Input } from "../ui/input";
-import { useState } from "react";
+import { z } from "zod";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { useGetCart } from "@/hooks/cart";
 import { CheckIcon } from "lucide-react";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { Button } from "../ui/button";
+import { useState } from "react";
+import { addDeliveryDetails } from "@/app/(frontend)/checkout/action";
+import { toast } from "sonner";
+import { Input } from "../ui/input";
+
+const formSchema = z.object({
+    address: z.string().min(8, "Address is too short"),
+    phoneNumber: z.string().min(11, "Phone number is too short"),
+    fullName: z.string().min(3, "Name is too short"),
+})
 
 export function CheckoutDetails(props: {
     
 }) {
-    const { data: cart } = useGetCart(); 
-    const [name, setName] = useState("")
+    const { data: cart } = useGetCart();
+    const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
+    const form  = useForm<z.infer<typeof formSchema>>({
+            resolver: zodResolver(formSchema),
+                defaultValues: {
+                    address: "",
+                    phoneNumber: "",
+                    fullName: "",
+            },
+          });
 
     const onPaymentMethodChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(e.target.value)
+        setPaymentMethod(e.target.value);
     }
-
-
+    const submitForm = async (values: z.infer<typeof formSchema>) => {
+        const res = await addDeliveryDetails("", {...values});
+        if(res.success) {
+            toast.success("Address added successfully");
+            return;
+        }
+        toast.error(res.error);
+    }
 
     return (
         <div className="flex w-full flex-col-reverse md:grid md:grid-cols-3 gap-8">
@@ -29,10 +57,69 @@ export function CheckoutDetails(props: {
                         <CardTitle>Shipping Address</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <form action="" className="grid">
-                            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter Full Address"
-                             className="w-full" />
-                        </form>
+                        <Dialog>
+                            <DialogTrigger>
+                                <Button>Add an address</Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Add an address</DialogTitle>
+                                </DialogHeader>
+                                <Form {...form}>
+                                    <form onSubmit={form.handleSubmit(submitForm)}
+                                    className="flex flex-col space-y-4">
+                                        <FormField
+                                        control={form.control}
+                                        name="fullName"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                            <FormLabel>Full Name</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Jon Doe" {...field} />
+                                            </FormControl>
+                                            <FormDescription className="sr-only" >
+                                                Enter your Name
+                                            </FormDescription>
+                                            <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="phoneNumber"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                            <FormLabel>Phone Number</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="08012345678" {...field} />
+                                            </FormControl>
+                                            <FormDescription className="sr-only" >
+                                                Enter your email
+                                            </FormDescription>
+                                            <FormMessage />
+                                            </FormItem>
+                                        )}
+                                        />
+                                        <FormField
+                                        control={form.control}
+                                        name="address"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                            <FormLabel>Address</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="123, Main Street" {...field} />
+                                            </FormControl>
+                                            <FormDescription className="sr-only" >
+                                                Enter your Address
+                                            </FormDescription>
+                                            <FormMessage />
+                                            </FormItem>
+                                        )}
+                                        />
+                                    </form>
+                                </Form>
+                            </DialogContent>
+                        </Dialog>
                     </CardContent>
                 </Card>
 
@@ -94,11 +181,13 @@ export function CheckoutDetails(props: {
             </div>
             </div>
             <div className="col-span-1 w-full">
-               {cart && <OrderSummary 
+               {cart && 
+               <OrderSummary 
                     cartId={cart.id} 
                     cartSubTotal={cart.total}
-                    fullName={name}
-                    />    }
+                    fullName={form.getValues("fullName")}
+                 />    
+                }
             </div>
             </div>
     )

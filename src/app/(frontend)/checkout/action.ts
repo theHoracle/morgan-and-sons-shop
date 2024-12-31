@@ -85,3 +85,18 @@ export const createPaymentSession = async ({
         }
     }
 }
+
+export const addDeliveryDetails = async (userId: string | number, details: { fullName: string, phoneNumber: string, address: string }) => {
+    const user = await payload.findByID({ collection: 'users', id: userId })
+    if(!user) return { success: false, error: 'User not found' }
+    if(!user.deliveryDetails) {
+        user.deliveryDetails = []
+    }
+    user.deliveryDetails.push(details)
+    await payload.update({
+        collection: 'users',
+        id: userId,
+        data: user
+    })
+    return { success: true }
+}

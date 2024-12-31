@@ -21,5 +21,24 @@ export const Users: CollectionConfig = {
         { label: 'Admin', value: 'admin' },
       ],
     },
+    {
+      name: 'deliveryDetails',
+      type: 'array',
+      fields: [
+        {
+          name: 'fullName',
+          type: 'text',
+        },
+        {
+          name: 'phoneNumber',
+          type: 'text',
+        },
+        {
+          name: 'address',
+          type: 'text',
+        },
+      ],
+      defaultValue: [],
+    }
   ],
 }
