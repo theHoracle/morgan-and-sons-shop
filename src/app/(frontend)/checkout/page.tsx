@@ -1,13 +1,16 @@
 import { CheckoutDetails } from "@/components/checkout-components/checkout-details"
 import { buttonVariants } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { getServerSideUser } from "@/lib/session"
 import { cn } from "@/lib/utils"
 import { ArrowRight } from "lucide-react"
+import { cookies } from "next/headers"
 import Link from "next/link"
 
 
 const CheckOutPage = async () => {
-    
+    const nextCookies = await cookies()
+    const { user } = await getServerSideUser(nextCookies)   
     return (
         <div className="relative h-screen w-screen flex flex-col items-center" >
             <header className="flex flex-col items-center w-screen px-4 h-16 border-b shadow-sm">
@@ -30,7 +33,7 @@ const CheckOutPage = async () => {
             <h1 className="text-2xl font-bold py-4 tracking-tight leading-tight">
                 Checkout
             </h1>
-            <CheckoutDetails />
+            <CheckoutDetails user={user} />
             </div>
         </div>
     )

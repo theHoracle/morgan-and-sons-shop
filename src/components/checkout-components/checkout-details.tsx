@@ -15,6 +15,7 @@ import { useState } from "react";
 import { addDeliveryDetails } from "@/app/(frontend)/checkout/action";
 import { toast } from "sonner";
 import { Input } from "../ui/input";
+import { User } from "@/payload-types";
 
 const formSchema = z.object({
     address: z.string().min(8, "Address is too short"),
@@ -23,7 +24,7 @@ const formSchema = z.object({
 })
 
 export function CheckoutDetails(props: {
-    
+    user: User | null
 }) {
     const { data: cart } = useGetCart();
     const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
@@ -35,12 +36,18 @@ export function CheckoutDetails(props: {
                     fullName: "",
             },
           });
-
+    
+    const userDeliveryDetails = props.user?.deliveryDetails;
+    type UserDeliveryDetails = typeof userDeliveryDetails;
+    const [selectedDeliveryDetails, setSelectedDeliveryDetails] = useState<NonNullable<UserDeliveryDetails>[0] | null>(userDeliveryDetails ? userDeliveryDetails[0] : null);
+          
     const onPaymentMethodChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPaymentMethod(e.target.value);
     }
+
+
     const submitForm = async (values: z.infer<typeof formSchema>) => {
-        const res = await addDeliveryDetails("", {...values});
+        const res = await addDeliveryDetails(((props.user?.id ?? "")), {...values});
         if(res.success) {
             toast.success("Address added successfully");
             return;
@@ -57,6 +64,19 @@ export function CheckoutDetails(props: {
                         <CardTitle>Shipping Address</CardTitle>
                     </CardHeader>
                     <CardContent>
+                        {selectedDeliveryDetails ? (
+                            <div className="flex flex-col space-y-2 rounded-md p-4 border-2 border-stone-700">
+                                <h3 className="font-semibold text-lg tracking-tight leading-tight">
+                                    {selectedDeliveryDetails.fullName}
+                                </h3>
+                                <p>{selectedDeliveryDetails.address}</p>
+                                <p>{selectedDeliveryDetails.phoneNumber}</p>
+                            </div>
+                        ) :  (
+                            <div className="flex flex-col space-y-2 rounded-md p-4 border-2 border-stone-700">
+                                <p>You have not added any address yet</p>
+                            </div>
+                        )} 
                         <Dialog>
                             <DialogTrigger>
                                 <Button>Add an address</Button>
@@ -183,7 +203,7 @@ export function CheckoutDetails(props: {
             <div className="col-span-1 w-full">
                {cart && 
                <OrderSummary 
-                    cartId={cart.id} 
+                    cartId={cart.id}
                     cartSubTotal={cart.total}
                     fullName={form.getValues("fullName")}
                  />    
