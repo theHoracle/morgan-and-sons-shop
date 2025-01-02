@@ -2,12 +2,7 @@ import { addItem, getCart, removeItem, createCart, getCartById } from "@/compone
 import { useCart } from "@/components/cart/cart-context"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
-export const useGetCartWithId = (cartId: string) => {
-    return useQuery({
-        queryKey: ['cart', cartId],
-        queryFn: () => getCartById(cartId),
-    })
-}
+
 
 export const useGetCart = () => {
     return useQuery({
@@ -29,30 +24,73 @@ export const useCreateCart = () => {
 
 export const useAddItem = () => {
     const queryClient = useQueryClient();
-    const { addCartItem } = useCart()
     return useMutation({
-        mutationKey: ['cart/add'],
         mutationFn: addItem,
-        onMutate: async ({selectedVariantId, product, quantity}) => {
-            addCartItem(selectedVariantId, product, quantity);
+        onMutate: async ({ selectedVariantId, product, quantity = 1 }) => {
+          await queryClient.cancelQueries(['cart']);
+    
+          const previousCart = queryClient.getQueryData<UsersCart>(['cart']);
+    
+          if (previousCart) {
+            const existingItemIndex = previousCart.items.findIndex(item => item.variantId === selectedVariantId);
+            let updatedItems;
+    
+            if (existingItemIndex > -1) {
+              updatedItems = previousCart.items.map((item, index) =>
+                index === existingItemIndex ? { ...item, quantity: item.quantity + quantity } : item
+              );
+            } else {
+              updatedItems = [...previousCart.items, { id: '', variantId: selectedVariantId, product, quantity, subTotal: product.price * quantity }];
+            }
+    
+            queryClient.setQueryData(['cart'], { ...previousCart, items: updatedItems });
+          }
+    
+          return { previousCart };
+        },
+        onError: (err, variables, context) => {
+          if (context?.previousCart) {
+            queryClient.setQueryData(['cart'], context.previousCart);
+          }
         },
         onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: ['cart'] });
+          queryClient.invalidateQueries(['cart']);
         },
-    });
-};
+      });
+    };
 
 export const useRemoveItem = () => {
     const queryClient = useQueryClient();
-    const { deleteCartItem } = useCart();
     return useMutation({
-        mutationKey: ['cart/remove'],
         mutationFn: removeItem,
-        onMutate: async ({itemId, removeCompletely}) => {
-            deleteCartItem(itemId, removeCompletely);
+        onMutate: async ({ itemId, removeCompletely }) => {
+          await queryClient.cancelQueries(['cart']);
+    
+          const previousCart = queryClient.getQueryData<UsersCart>(['cart']);
+    
+          if (previousCart) {
+            let updatedItems;
+    
+            if (removeCompletely) {
+              updatedItems = previousCart.items.filter(item => item.id !== itemId);
+            } else {
+              updatedItems = previousCart.items.map(item =>
+                item.id === itemId ? { ...item, quantity: item.quantity - 1 } : item
+              ).filter(item => item.quantity > 0);
+            }
+    
+            queryClient.setQueryData(['cart'], { ...previousCart, items: updatedItems });
+          }
+    
+          return { previousCart };
+        },
+        onError: (err, variables, context) => {
+          if (context?.previousCart) {
+            queryClient.setQueryData(['cart'], context.previousCart);
+          }
         },
         onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: ['cart'] });
+          queryClient.invalidateQueries(['cart']);
         },
-    });
-};
+      });
+    };

@@ -9,12 +9,13 @@ import Image from 'next/image'
 import { useCart } from './cart-context'
 import { UsersCart } from '@/payload-types'
 import { useAddItem, useRemoveItem } from '@/hooks/cart'
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation'
 
  
 export default function Cart() {
   // const { data: cart } = useGetCart()
-  const { cart } = useCart()
+  const { data: cart } = useQuery(['cart'], getCart);
   const { mutate: addCartItem } = useAddItem();
   const { mutate: deleteCartItem } = useRemoveItem()
   console.log("Cart: ", cart)

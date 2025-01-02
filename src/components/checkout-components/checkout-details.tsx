@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { OrderSummary } from "./order-summary"
 import { z } from "zod";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { useGetCart } from "@/hooks/cart";
 import { CheckIcon } from "lucide-react";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { useForm } from "react-hook-form";
@@ -14,6 +13,7 @@ import { Button } from "../ui/button";
 import { useState } from "react";
 import { addDeliveryDetails } from "@/app/(frontend)/checkout/action";
 import { toast } from "sonner";
+import { useQuery } from '@tanstack/react-query';
 import { Input } from "../ui/input";
 import { User } from "@/payload-types";
 
@@ -26,7 +26,7 @@ const formSchema = z.object({
 export function CheckoutDetails(props: {
     user: User | null
 }) {
-    const { data: cart } = useGetCart();
+    const { data: cart } = useQuery(['cart'], getCart);
     const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
     const form  = useForm<z.infer<typeof formSchema>>({
             resolver: zodResolver(formSchema),
@@ -63,9 +63,9 @@ export function CheckoutDetails(props: {
                     <CardHeader>
                         <CardTitle>Shipping Address</CardTitle>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="flex flex-col gap-2 items-end">
                         {selectedDeliveryDetails ? (
-                            <div className="flex flex-col space-y-2 rounded-md p-4 border-2 border-stone-700">
+                            <div className="flex flex-col space-y-2 rounded-lg p-4 border-2 border-stone-500">
                                 <h3 className="font-semibold text-lg tracking-tight leading-tight">
                                     {selectedDeliveryDetails.fullName}
                                 </h3>
@@ -73,7 +73,7 @@ export function CheckoutDetails(props: {
                                 <p>{selectedDeliveryDetails.phoneNumber}</p>
                             </div>
                         ) :  (
-                            <div className="flex flex-col space-y-2 rounded-md p-4 border-2 border-stone-700">
+                            <div className="flex flex-col space-y-2 rounded-lg p-4 border-2 border-stone-500">
                                 <p>You have not added any address yet</p>
                             </div>
                         )} 
@@ -136,6 +136,7 @@ export function CheckoutDetails(props: {
                                             </FormItem>
                                         )}
                                         />
+                                        <Button type="submit">Add Details</Button>
                                     </form>
                                 </Form>
                             </DialogContent>
@@ -149,10 +150,12 @@ export function CheckoutDetails(props: {
                         <CardTitle>Delivery Details</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="border-2 border-stone-700 rounded-md p-4 ">
-                            <CheckIcon className="fill-green-500" />
-                            <span className="">
-                                Your order will be delivered to the address you provided above on <strong>7th of August</strong>.
+                        <div className="border-2 border-stone-500 rounded-lg p-4 flex gap-2 ">
+                            <div className="flex items-center justify-center p-2 rounded-full bg-green-500">
+                            <CheckIcon className="text-white" />
+                            </div>
+                            <span className="flex-1">
+                                Your order will be delivered to the address you provided above on <strong>{new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString()}</strong>.
                             </span>
                         </div>
                     </CardContent>
@@ -167,8 +170,8 @@ export function CheckoutDetails(props: {
                         <RadioGroup defaultValue="paymentOnDelivery" 
                           onChange={onPaymentMethodChange} name="paymentMethod" >
                             <div className="flex flex-col space-y-4 w-full">
-                                <div className="flex items-center gap-4 border-2 border-stone-700 rounded-md">
-                                    <RadioGroupItem id="r1" value="paymentOnDelivery" />
+                                <div className="flex items-center gap-4 border-2 border-stone-500 p-4 rounded-lg">
+                                    <RadioGroupItem id="r1" value="paystackPayment" />
                                     <div className="flex flex-col items-start">
                                         <h4 className="font-semibold text-lg tracking-tight leading-tight">
                                             Pay now with Paystack
@@ -176,7 +179,7 @@ export function CheckoutDetails(props: {
                                         <p>Pay when you receive your order</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-4 border-2 border-stone-700 rounded-md">
+                                <div className="flex items-center gap-4 border-2 border-stone-500 p-4 rounded-lg">
                                     <RadioGroupItem id="r2" value="paymentOnDelivery" />
                                     <div className="flex flex-col items-start">
                                         <h4 className="font-semibold text-lg tracking-tight leading-tight">
@@ -185,11 +188,11 @@ export function CheckoutDetails(props: {
                                         <p>Pay when you receive your order</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-4 border-2 border-stone-700 rounded-md">
-                                    <RadioGroupItem id="r1" value="paymentOnDelivery" />
+                                <div className="flex items-center gap-4 border-2 border-stone-500 p-4 rounded-lg">
+                                    <RadioGroupItem id="r1" value="pickUp" />
                                     <div className="flex flex-col items-start">
                                         <h4 className="font-semibold text-lg tracking-tight leading-tight">
-                                            Pick up
+                                            Pick up in store
                                         </h4>
                                         <p>Make yout order and make a stop at our location to pick up your order</p>
                                     </div>

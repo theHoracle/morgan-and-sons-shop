@@ -12,22 +12,9 @@ const ClientProviders = ({
    
     return <SidebarProvider>
         <QueryProvider>
-            <Cart>
             {children}
-            </Cart>
         </QueryProvider>
     </SidebarProvider>
 }
 
 export default ClientProviders
-
-const Cart = ({
-    children
-}: {
-    children: React.ReactNode
-}) => {
-    const { data: cart } = useGetCart()
-    return <CartProvider initialCart={cart}>
-        {children}
-    </CartProvider>
-}

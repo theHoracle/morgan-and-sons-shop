@@ -20,7 +20,7 @@ export function OrderSummary(props: {
                 <CardTitle>Order Summary</CardTitle>
             </CardHeader>
             <CardContent>
-                <p>Cart not found</p>
+                <p>Cart is empty</p>
             </CardContent>
         </Card>
     )
