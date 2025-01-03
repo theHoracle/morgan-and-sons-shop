@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { useQuery } from '@tanstack/react-query';
 import { Input } from "../ui/input";
 import { User } from "@/payload-types";
+import { useGetCart } from "@/hooks/cart";
 
 const formSchema = z.object({
     address: z.string().min(8, "Address is too short"),
@@ -26,7 +27,7 @@ const formSchema = z.object({
 export function CheckoutDetails(props: {
     user: User | null
 }) {
-    const { data: cart } = useQuery(['cart'], getCart);
+    const { data: cart } = useGetCart();
     const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
     const form  = useForm<z.infer<typeof formSchema>>({
             resolver: zodResolver(formSchema),

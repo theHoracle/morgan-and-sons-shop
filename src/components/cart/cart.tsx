@@ -7,14 +7,12 @@ import Link from 'next/link'
 import { formatNairaPrice } from '@/lib/helpers'
 import Image from 'next/image'
 import { UsersCart } from '@/payload-types'
-import { useAddItem, useRemoveItem } from '@/hooks/cart'
-import { useQuery } from '@tanstack/react-query';
+import { useAddItem, useGetCart, useRemoveItem } from '@/hooks/cart'
 import { useRouter } from 'next/navigation'
 
  
 export default function Cart() {
-  // const { data: cart } = useGetCart()
-  const { data: cart } = useQuery(['cart'], getCart);
+  const { data: cart } = useGetCart()
   const { mutate: addCartItem } = useAddItem();
   const { mutate: deleteCartItem } = useRemoveItem()
   console.log("Cart: ", cart)
