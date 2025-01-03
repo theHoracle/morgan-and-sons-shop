@@ -24,6 +24,14 @@ export const Orders: CollectionConfig = {
             },
         },
         {
+            name: 'orderTotal',
+            type: 'number',
+            required: true,
+            access: {
+                update: () => false
+            }
+        },
+        {
             name: "deliveryDetails",
             type: "array",
             fields: [

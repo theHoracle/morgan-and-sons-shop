@@ -4,16 +4,16 @@ import { formatNairaPrice } from "@/lib/helpers"
 import { Button } from "../ui/button";
 import { createPaymentSession } from "@/app/(frontend)/checkout/action";
 import { toast } from "sonner";
+import { User } from "@/payload-types";
 
 
 export function OrderSummary(props: {
     cartId: string | number, 
     cartSubTotal: number | undefined | null,
-    fullName: string | undefined | null
+    deliveryDetail: NonNullable<User["deliveryDetails"]>[0] | null,
 }) {
     const PROCESSING_FEE = 1000;
-    const  { cartId, cartSubTotal, fullName } = props;
-
+    const  { cartId, cartSubTotal, deliveryDetail } = props;
     if(!cartId || !cartSubTotal) return (
         <Card>
             <CardHeader>
@@ -28,10 +28,11 @@ export function OrderSummary(props: {
 
     async function handleConfirmOrder() {
         // create payment session
+        if(!cartId || !cartSubTotal || !deliveryDetail) return;
         const response = await createPaymentSession({
             cartId,
             unitAmount: cartTotal,
-            fullName: fullName || '',
+            deliveryDetail
         })
         if(response.success) {
             if(response.sessionUrl) {
@@ -74,7 +75,7 @@ export function OrderSummary(props: {
                 <Button 
                 size="lg" className="w-full"
                 onClick={handleConfirmOrder}
-                disabled={!fullName}
+                disabled={!cartId || !cartSubTotal || !deliveryDetail}
                 >
                 Confirm Order
                 </Button>

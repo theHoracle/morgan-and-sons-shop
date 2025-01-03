@@ -241,6 +241,7 @@ export interface Order {
   id: number;
   user: number | User;
   order: number | UsersCart;
+  orderTotal: number;
   deliveryDetails?:
     | {
         fullname?: string | null;
@@ -514,6 +515,7 @@ export interface ProductsSelect<T extends boolean = true> {
 export interface OrdersSelect<T extends boolean = true> {
   user?: T;
   order?: T;
+  orderTotal?: T;
   deliveryDetails?:
     | T
     | {

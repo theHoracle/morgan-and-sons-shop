@@ -1,6 +1,7 @@
 "use server"
 
 import { payload } from "@/payload";
+import { User } from "@/payload-types";
 import { paystack } from "@/paystack";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -8,11 +9,11 @@ type CreatePaymentSessionResponse = { success: true; sessionUrl: string } | { su
 type CreatePaymentSessionParams = {
     unitAmount: number,
     cartId: string | number,
-    fullName: string
+    deliveryDetail: NonNullable<User["deliveryDetails"]>[0],
 }
 
 export const createPaymentSession = async ({
-    cartId, unitAmount, fullName
+    cartId, unitAmount, deliveryDetail
 }: CreatePaymentSessionParams): Promise<CreatePaymentSessionResponse> => {
     if(unitAmount <= 1000) {
         return {
@@ -44,14 +45,8 @@ export const createPaymentSession = async ({
             paymentStatus: 'pending',
             status: 'pending',
             referenceId: reference,
-            deliveryDetails: [
-                {
-                    fullname: fullName,
-                    address: 'No address provided',
-                    paymentType: 'paystack',
-                    shipmentType: 'delivery',
-                },
-            ],
+            deliveryDetails: [ deliveryDetail ],
+            orderTotal: unitAmount
         }
     })
     // get user details
@@ -60,14 +55,14 @@ export const createPaymentSession = async ({
             : userCart.user
 
     try {
-        const amountDonated = unitAmount * 100
+        const cartTotal = unitAmount * 100
         const paystackSession = await paystack.transaction.initialize({
-            amount: amountDonated,
+            amount: cartTotal,
             currency: 'NGN',
             email: user.email,
-            name: fullName,
+            name: deliveryDetail.fullName ?? user.email,
             reference,
-            callback_url: `${process.env.NEXT_PUBLIC_URL}/checkout/order?id=${order.id}`,
+            callback_url: `${process.env.NEXT_PUBLIC_URL}/checkout/?orderId=${order.id}`,
             metadata: {
                 userId: user.id,
                 orderId: order.id,
