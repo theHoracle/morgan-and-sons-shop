@@ -3,7 +3,6 @@ import { useAddItem } from "@/hooks/cart";
 import { Product } from "@/payload-types";
 import clsx from "clsx";
 import { PlusIcon } from "lucide-react";
-import { useCart } from "./cart-context";
 import { useActionState } from "react";
 import { addItem } from "./action";
 

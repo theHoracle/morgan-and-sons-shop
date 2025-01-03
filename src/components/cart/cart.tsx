@@ -6,7 +6,6 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHe
 import Link from 'next/link'
 import { formatNairaPrice } from '@/lib/helpers'
 import Image from 'next/image'
-import { useCart } from './cart-context'
 import { UsersCart } from '@/payload-types'
 import { useAddItem, useRemoveItem } from '@/hooks/cart'
 import { useQuery } from '@tanstack/react-query';

@@ -1,6 +1,5 @@
 "use client"
 import { useGetCart } from "@/hooks/cart"
-import { CartProvider } from "../cart/cart-context"
 import { SidebarProvider } from "../ui/sidebar"
 import QueryProvider from "./QueryProvider"
 
