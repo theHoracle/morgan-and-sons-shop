@@ -177,6 +177,32 @@ const DeliveryDetailsForm = (props: {
         <DialogHeader>
             <DialogTitle>Select an address</DialogTitle>
         </DialogHeader>
+        {props.userDeliveryDetails && <div>
+                <RadioGroup defaultValue={props.userDeliveryDetails[0].address ?? ""} 
+                    onChange={(e) => {
+                        const selected = props.userDeliveryDetails?.find(d => d.address === (e.target as HTMLInputElement).value);
+                        if(selected) {
+                            props.setSelectedDeliveryDetails(selected);
+                        }
+                    }}
+                    name="deliveryDetails"
+                    >
+                    <div className="flex flex-col space-y-4 w-full">
+                        {props.userDeliveryDetails?.map((detail) => (
+                            <div key={detail.address} className="flex items-center gap-4 border-2 border-stone-300 p-4 rounded-lg">
+                                <RadioGroupItem id={ detail.address ?? "" } value={ detail.address ?? "" } />
+                                <label htmlFor={ detail.address ?? "" } className="flex flex-col items-start">
+                                    <h4 className="font-semibold text-lg tracking-tight leading-tight">
+                                        {detail.fullName}
+                                    </h4>
+                                    <p>{detail.address}</p>
+                                    <p>{detail.phoneNumber}</p>
+                                </label>
+                            </div>
+                        ))}
+                    </div>
+                    </RadioGroup>
+            </div>}
         <div className="w-full rounded-lg bg-stone-300 px-4 py-2 flex items-center justify-between cursor-pointer transition-all"
         onClick={() => setOpenForm(!openForm)}
         >

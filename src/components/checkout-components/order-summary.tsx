@@ -13,6 +13,7 @@ export function OrderSummary(props: {
     deliveryDetail: NonNullable<User["deliveryDetails"]>[0] | null,
 }) {
     const PROCESSING_FEE = 1000;
+    console.log("OrderSummary props: ", props)
     const  { cartId, cartSubTotal, deliveryDetail } = props;
     if(!cartId || !cartSubTotal) return (
         <Card>
