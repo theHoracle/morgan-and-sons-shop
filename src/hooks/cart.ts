@@ -40,10 +40,14 @@ export const useAddItem = () => {
                 index === existingItemIndex ? { ...item, quantity: item.quantity + quantity } : item
               );
             } else {
-              updatedItems = [...(previousCart.items || []), { id: '', variantId: selectedVariantId, product, quantity, subTotal: product.price * quantity }];
+              updatedItems = [...(previousCart.items || []), { 
+                id: '', variantId: selectedVariantId, product, quantity, subTotal: product.price * quantity }];
             }
-    
-            queryClient.setQueryData(['cart'], { ...previousCart, items: updatedItems });
+            const total = Array.isArray(updatedItems) ? updatedItems.reduce((total, item) => (
+              total + (item?.subTotal ?? 0)
+            ), 0) : 0
+
+            queryClient.setQueryData(['cart'], { ...previousCart, items: updatedItems, total });
           }
     
           return { previousCart };
@@ -78,8 +82,12 @@ export const useRemoveItem = () => {
                 item.id === itemId ? { ...item, quantity: item.quantity - 1 } : item
               ).filter(item => item.quantity > 0);
             }
-    
-            queryClient.setQueryData(['cart'], { ...previousCart, items: updatedItems });
+
+            const total = Array.isArray(updatedItems) ? updatedItems.reduce((total, item) => (
+              total + (item?.subTotal ?? 0)
+            ), 0) : 0
+
+            queryClient.setQueryData(['cart'], { ...previousCart, items: updatedItems, total });
           }
     
           return { previousCart };

@@ -36,6 +36,7 @@ export const Users: CollectionConfig = {
         {
           name: 'address',
           type: 'text',
+          unique: true,
         },
       ],
       defaultValue: [],

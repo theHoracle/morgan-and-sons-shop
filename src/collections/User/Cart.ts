@@ -83,7 +83,7 @@ export const UsersCart: CollectionConfig = {
 
         // Calculate total
         data.total = data.items?.reduce(
-          (sum: number, item: any) => sum + (item.subTotal || 0),
+          (sum: number, item: any) => sum + (item.subTotal ?? 0),
           0
         );
 

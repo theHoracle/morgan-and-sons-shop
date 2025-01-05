@@ -163,6 +163,8 @@ const DeliveryDetailsForm = (props: {
         const res = await addDeliveryDetails(((props.userId ?? "")), {...values});
         if(res.success) {
             toast.success("Address added successfully");
+            // reset form values
+            form.reset()
             return;
         }
         toast.error(res.error);
