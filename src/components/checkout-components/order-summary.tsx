@@ -5,17 +5,19 @@ import { Button } from "../ui/button";
 import { createPaymentSession } from "@/app/(frontend)/checkout/action";
 import { toast } from "sonner";
 import { User } from "@/payload-types";
+import { useGetCart } from "@/hooks/cart";
 
 
 export function OrderSummary(props: {
-    cartId: string | number, 
-    cartSubTotal: number | undefined | null,
     deliveryDetail: NonNullable<User["deliveryDetails"]>[0] | null,
 }) {
     const PROCESSING_FEE = 1000;
+    const { data: cart } = useGetCart();
+    console.log(cart);
+    const { deliveryDetail } = props;
     console.log("OrderSummary props: ", props)
-    const  { cartId, cartSubTotal, deliveryDetail } = props;
-    if(!cartId || !cartSubTotal) return (
+    
+    if(!cart || !cart.items) return (
         <Card>
             <CardHeader>
                 <CardTitle>Order Summary</CardTitle>
@@ -25,13 +27,14 @@ export function OrderSummary(props: {
             </CardContent>
         </Card>
     )
-    const cartTotal = PROCESSING_FEE + cartSubTotal
+    const cartTotal = cart.total ? cart.total : cart.items.reduce((sum, item) => sum += (item.subTotal ?? 0), 0);
+    const orderTotal = PROCESSING_FEE + cartTotal
 
     async function handleConfirmOrder() {
         // create payment session
-        if(!cartId || !cartSubTotal || !deliveryDetail) return;
+        if(!deliveryDetail || !cart) return;
         const response = await createPaymentSession({
-            cartId,
+            cartId: cart.id,
             unitAmount: cartTotal,
             deliveryDetail
         })
@@ -69,14 +72,14 @@ export function OrderSummary(props: {
                 <li>
                 <span className="flex items-center py-2 justify-between">
                 Total:
-                <p>{formatNairaPrice(PROCESSING_FEE + (cartTotal))}</p>
+                <p>{formatNairaPrice(orderTotal)}</p>
                 </span>
                 </li>
                 </ul>
                 <Button 
                 size="lg" className="w-full"
                 onClick={handleConfirmOrder}
-                disabled={!cartId || !cartSubTotal || !deliveryDetail}
+                disabled={!deliveryDetail}
                 >
                 Confirm Order
                 </Button>

@@ -27,10 +27,7 @@ const formSchema = z.object({
 export function CheckoutDetails(props: {
     user: User | null
 }) {
-    const { data: cart } = useGetCart();
-    console.log(cart);
     const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
-    
     const userDeliveryDetails = props.user?.deliveryDetails;
     type UserDeliveryDetails = typeof userDeliveryDetails;
     const [selectedDeliveryDetails, setSelectedDeliveryDetails] = useState<NonNullable<UserDeliveryDetails>[0] | null>(userDeliveryDetails ? userDeliveryDetails[0] : null);
@@ -129,14 +126,8 @@ export function CheckoutDetails(props: {
                 </Card>
             </div>
             </div>
-            <div className="col-span-1 w-full">
-               {cart && 
-               <OrderSummary 
-                    cartId={cart.id}
-                    cartSubTotal={cart.total}
-                    deliveryDetail={selectedDeliveryDetails}
-                 />    
-                }
+            <div className="col-span-1 w-full"> 
+               <OrderSummary deliveryDetail={selectedDeliveryDetails} />    
             </div>
             </div>
     )
