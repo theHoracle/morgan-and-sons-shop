@@ -33,13 +33,14 @@ export const UsersCart: CollectionConfig = {
       options: [
         {
           label: "Awaiting Checkout",
-          value: "awaitingCheckout"
+          value: "awaitingCheckout",
         },
         {
           label: "Checked Out",
-          value: "checkedOut"
+          value: "checkedOut",
         }
       ],
+      defaultValue: "awaitingCheckout",
     },
     {
       name: "items",
@@ -85,17 +86,6 @@ export const UsersCart: CollectionConfig = {
     beforeChange: [
       async ({ data, operation }) => {
         if (operation === "create" || operation === "update") {
-          // Calculate subTotal for each item
-          data.items = data.items?.map((item: any) => {
-          const variant = item.product?.variants?.find(
-            (v: any) => v.id === item.variantId
-          );
-          const price = variant?.price || item.product?.price
-          return {
-            ...item,
-            subTotal: price * (item.quantity || 1),
-          };
-        });
         // Calculate total
         data.total = data.items?.reduce(
           (sum: number, item: any) => sum + item.subTotal!,

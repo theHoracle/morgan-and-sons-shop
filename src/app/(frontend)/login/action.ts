@@ -16,8 +16,8 @@ export async function loginUser({
     })
     if(token && user.id) {
         await Promise.all([
+            mergeUsersCart({ userId: user.id }),
             setJWTSession(token),
-            mergeUsersCart({ userId: user.id })
         ])
         redirect(redirectUrl)
     }
