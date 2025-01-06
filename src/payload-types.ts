@@ -265,6 +265,7 @@ export interface Order {
 export interface UsersCart {
   id: number;
   user?: (number | null) | User;
+  cartStatus?: ('awaitingCheckout' | 'checkedOut') | null;
   items?:
     | {
         product: number | Product;
@@ -538,6 +539,7 @@ export interface OrdersSelect<T extends boolean = true> {
  */
 export interface UsersCartSelect<T extends boolean = true> {
   user?: T;
+  cartStatus?: T;
   items?:
     | T
     | {

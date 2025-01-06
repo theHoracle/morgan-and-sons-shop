@@ -2,20 +2,6 @@ import { ProductCard } from "@/components/product-card"
 import { payload } from "@/payload"
 import { notFound } from "next/navigation"
 
-export async function generateStaticParams() {
-    const { docs: categories } = await payload.find({
-        collection: 'categories',
-        depth: 0,
-        select: { slug: true }
-    })
-    if(categories.length === 0) {
-        return []
-    }
-    return categories.map((category) => ({
-        slug: category.slug
-    }))
-}
-
 const CategoryPage = async ({ params }: {params: Promise<{category: string}>}) => {
     const { category } = await params
     if(!category) {

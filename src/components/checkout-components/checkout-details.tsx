@@ -16,7 +16,7 @@ import { toast } from "sonner";
 
 import { Input } from "../ui/input";
 import { User } from "@/payload-types";
-import { useGetCart } from "@/hooks/cart";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const formSchema = z.object({
     address: z.string().min(8, "Address is too short"),
@@ -31,7 +31,7 @@ export function CheckoutDetails(props: {
     const userDeliveryDetails = props.user?.deliveryDetails;
     type UserDeliveryDetails = typeof userDeliveryDetails;
     const [selectedDeliveryDetails, setSelectedDeliveryDetails] = useState<NonNullable<UserDeliveryDetails>[0] | null>(userDeliveryDetails ? userDeliveryDetails[0] : null);
-          
+
     const onPaymentMethodChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPaymentMethod(e.target.value);
     }
@@ -140,6 +140,7 @@ const DeliveryDetailsForm = (props: {
     setSelectedDeliveryDetails: (details: NonNullable<User["deliveryDetails"]>[0]) => void
 }) => {
     const [openForm, setOpenForm] = useState(false);
+
     const form  = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
             defaultValues: {
@@ -148,6 +149,11 @@ const DeliveryDetailsForm = (props: {
                 fullName: "",
         },
       });
+    
+    const isMobile = useIsMobile()
+    if(isMobile) {
+        setOpenForm(true)
+    }
 
     
     const submitForm = async (values: z.infer<typeof formSchema>) => {
@@ -166,10 +172,11 @@ const DeliveryDetailsForm = (props: {
     <DialogTrigger>
         <Button>Edit delivery detail</Button>
     </DialogTrigger>
-    <DialogContent>
+    <DialogContent className="h-3/4 overflow-y-scroll ">
         <DialogHeader>
             <DialogTitle>Select an address</DialogTitle>
         </DialogHeader>
+        <div className="grid md:grid-cols-2 gap-2 lg:gap-4">
         {props.userDeliveryDetails && <div>
                 <RadioGroup defaultValue={props.userDeliveryDetails[0].address ?? ""} 
                     onChange={(e) => {
@@ -196,71 +203,75 @@ const DeliveryDetailsForm = (props: {
                     </div>
                     </RadioGroup>
             </div>}
-        <div className="w-full rounded-lg bg-stone-300 px-4 py-2 flex items-center justify-between cursor-pointer transition-all"
-        onClick={() => setOpenForm(!openForm)}
-        >
-            Add new address
-            {openForm ? (
-                <ChevronDown className="size-5 " />
-            ) : (
-                <ChevronUp className="size-5 " />
-            )}
+        <div>
+            <div className="w-full rounded-lg bg-stone-300 px-4 py-2 flex items-center justify-between cursor-pointer transition-all"
+            onClick={() => setOpenForm(!openForm)}
+            >
+                Add new address
+                {openForm ? (
+                    <ChevronDown className="size-5 " />
+                ) : (
+                    <ChevronUp className="size-5 " />
+                )}
+            </div>
+            {openForm &&
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(submitForm)}
+                className="flex flex-col space-y-4">
+                    <FormField
+                    control={form.control}
+                    name="fullName"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Full Name</FormLabel>
+                        <FormControl>
+                            <Input placeholder="Jon Doe" {...field} />
+                        </FormControl>
+                        <FormDescription className="sr-only" >
+                            Enter your Name
+                        </FormDescription>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="phoneNumber"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Phone Number</FormLabel>
+                        <FormControl>
+                            <Input placeholder="08012345678" {...field} />
+                        </FormControl>
+                        <FormDescription className="sr-only" >
+                            Enter your email
+                        </FormDescription>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                    <FormField
+                    control={form.control}
+                    name="address"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Address</FormLabel>
+                        <FormControl>
+                            <Input placeholder="123, Main Street" {...field} />
+                        </FormControl>
+                        <FormDescription className="sr-only" >
+                            Enter your Address
+                        </FormDescription>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                    <Button type="submit">Add Details</Button>
+                </form>
+            </Form>
+            }
         </div>
-        {openForm &&
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(submitForm)}
-            className="flex flex-col space-y-4">
-                <FormField
-                control={form.control}
-                name="fullName"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Full Name</FormLabel>
-                    <FormControl>
-                        <Input placeholder="Jon Doe" {...field} />
-                    </FormControl>
-                    <FormDescription className="sr-only" >
-                        Enter your Name
-                    </FormDescription>
-                    <FormMessage />
-                    </FormItem>
-                )}
-            />
-            <FormField
-                control={form.control}
-                name="phoneNumber"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
-                    <FormControl>
-                        <Input placeholder="08012345678" {...field} />
-                    </FormControl>
-                    <FormDescription className="sr-only" >
-                        Enter your email
-                    </FormDescription>
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
-                <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Address</FormLabel>
-                    <FormControl>
-                        <Input placeholder="123, Main Street" {...field} />
-                    </FormControl>
-                    <FormDescription className="sr-only" >
-                        Enter your Address
-                    </FormDescription>
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
-                <Button type="submit">Add Details</Button>
-            </form>
-        </Form>}
+        </div>
     </DialogContent>
 </Dialog>
 }

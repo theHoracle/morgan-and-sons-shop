@@ -64,6 +64,7 @@ const PaystackWebhook: Endpoint = {
                 collection: 'orders',
                 id: session.metadata.orderId
             })
+
             if(!order) {
                 return Response.json({
                     error: 'Webhook Error: No order found'
@@ -71,15 +72,23 @@ const PaystackWebhook: Endpoint = {
             }
 
             // Update order info to verify payment on server
-            await payload.update({
-                collection: 'orders',
-                id: order.id,
-                data: {
-                    paymentStatus: 'paid',
-                    status: 'shipped',
-                }
-            })
-            
+            await Promise.all([
+                payload.update({
+                    collection: 'orders',
+                    id: order.id,
+                    data: {
+                        paymentStatus: 'paid',
+                        status: 'shipped',
+                    }
+                }),
+                payload.update({
+                    collection: "users-cart",
+                    id: typeof order.order === "number" ? order.order : order.order.id,
+                    data: {
+                        cartStatus: "checkedOut"
+                    }
+                })
+            ]) 
             return Response.json({message: 'Updated Successfully'}, {status: 200})
         }
         return Response.json({message: 'No relevant event found'}, {status: 400})

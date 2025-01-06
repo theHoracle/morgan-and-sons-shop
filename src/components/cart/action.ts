@@ -21,18 +21,17 @@ export const setCookieCart = async (cartId: string | number) => {
     (await cookies()).set(COOKIE_CART_KEY, cartId.toString());
 };
 
-export const getCartById = async (cartId: string) => (
-    await payload.findByID({
+const getCartById = async (cartId: string) => (
+    await (payload.findByID({
         collection: "users-cart",
-        id: cartId
-    })
+        id: cartId,
+    }) ?? createCart())
 )
 
 // -- Fetch Cart or Create New Cart
 export const getCart = async () => {
     const nextCookies = await cookies();
     const { user } = await getServerSideUser(nextCookies)
-
     // if no user, check for cookie cart. If no cookie cart, create a new cart
     if (!user) {
         const cartId = await getCookieCart()
@@ -47,6 +46,7 @@ export const getCart = async () => {
         collection: "users-cart",
         where: {
             user: { equals: user?.id },
+            and: [ { cartStatus: { equals: "awaitingCheckout" } } ]
         },
     });
     const [cart] = carts
@@ -196,7 +196,11 @@ export const mergeUsersCart = async ({ userId }: {userId: number}) => {
     // get carts
     const [ guestCart, { docs: usersCart } ] = await Promise.all([
         getCartById(getCookieCartId),
-        payload.find({ collection: "users-cart", where: { user: { equals: userId } } })
+        payload.find({ collection: "users-cart", 
+                where: { 
+                    user: { equals: userId },
+                    and: [ { cartStatus: { equals: "awaitingCheckout" } } ]
+                } })
     ])
     const [userCart] = usersCart
     if(!userCart) {
@@ -209,8 +213,8 @@ export const mergeUsersCart = async ({ userId }: {userId: number}) => {
             }
         })
         await Promise.all([
+            setCookieCart(cart.id),
             payload.delete({ collection: "users-cart", id: guestCart.id }),
-            setCookieCart(cart.id)
         ])
         return;
     }
@@ -228,8 +232,8 @@ export const mergeUsersCart = async ({ userId }: {userId: number}) => {
     })
     
     await Promise.all([
+        setCookieCart(userCart.id),
         payload.update({ collection: "users-cart", id: userCart.id, data: { items: updatedItems } }),
         payload.delete({ collection: "users-cart", id: guestCart.id }),
-        setCookieCart(userCart.id),
     ]) 
 }

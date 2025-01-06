@@ -6,6 +6,7 @@ import { createPaymentSession } from "@/app/(frontend)/checkout/action";
 import { toast } from "sonner";
 import { User } from "@/payload-types";
 import { useGetCart } from "@/hooks/cart";
+import { useState } from "react";
 
 
 export function OrderSummary(props: {
@@ -16,7 +17,8 @@ export function OrderSummary(props: {
     console.log(cart);
     const { deliveryDetail } = props;
     console.log("OrderSummary props: ", props)
-    
+    const [isLoading, setIsLoading] = useState(false)
+
     if(!cart || !cart.items) return (
         <Card>
             <CardHeader>
@@ -31,8 +33,10 @@ export function OrderSummary(props: {
     const orderTotal = PROCESSING_FEE + cartTotal
 
     async function handleConfirmOrder() {
+        setIsLoading(true)
         // create payment session
         if(!deliveryDetail || !cart) return;
+        try {
         const response = await createPaymentSession({
             cartId: cart.id,
             unitAmount: cartTotal,
@@ -47,8 +51,14 @@ export function OrderSummary(props: {
             }
         } else {
             toast.error(response.error);
+            throw new Error(response.error)
         }
-
+        } catch (err) {
+            console.log("Error: ", err)   
+        } finally {
+            setIsLoading(false)
+        }
+        
     }
 
     return (

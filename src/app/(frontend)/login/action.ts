@@ -1,5 +1,4 @@
 "use server"
-
 import { mergeUsersCart } from "@/components/cart/action"
 import { setJWTSession } from "@/lib/session"
 import { payload } from "@/payload"

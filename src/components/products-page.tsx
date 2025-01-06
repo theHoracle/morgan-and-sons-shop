@@ -39,15 +39,15 @@ const ProductPage = (props: { product: Product }) => {
     setSelectedColor(color)
     updateSelectedVariant(selectedSize, color)
   }
-  console.log("Product: ", product, "\nVariantID: ", selectedVariant?.id, "\nQuantity: ", quantity, "\nSelectedImage: ", selectedImage, "\nSelectedSize: ", selectedSize, "\nSelectedColor: ", selectedColor)
+
   return (
-    <div className="container mx-auto px-4 py-12 bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+    <div className="container mx-auto bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="max-w-7xl mx-auto md:h-[calc(100lvh - 80px)]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
           {/* Image Gallery */}
           <div className="space-y-4">
             {/* Desktop Gallery */}
-            <div className="hidden lg:block">
+            <div className="hidden md:block">
               <div className="relative aspect-square overflow-hidden rounded-2xl shadow-lg">
                 <Image
                   src={images[selectedImage].url ?? "/placeholder.png"}
@@ -78,7 +78,7 @@ const ProductPage = (props: { product: Product }) => {
               </div>
             </div>
             {/* Mobile Slider */}
-            <div className="lg:hidden">
+            <div className="block md:hidden">
               <Carousel>
                 <CarouselContent>
                   {images.map((image, index) => (
@@ -109,7 +109,7 @@ const ProductPage = (props: { product: Product }) => {
           </div>
 
           {/* Product Information */}
-          <div className="space-y-8">
+          <div className="md:space-y-2 lg:space-y-8">
             <div>
               <h1 className="text-4xl font-bold text-gray-900 mb-2">{product.title}</h1>
               <p className="text-xl text-gray-600">{product.description}</p>
@@ -127,24 +127,18 @@ const ProductPage = (props: { product: Product }) => {
             </div>
 
             {/* Variant Selection */}
-            <div className="space-y-6">
+            <div className="space-y-3 lg:space-y-6">
               {/* Size Selection */}
               {sizes.length > 0 && (
-                <div className="space-y-4">
+                <div className="space-y-2 lg:space-y-4">
                   <label className="block text-sm font-medium text-gray-700">Size</label>
                   <div className="flex flex-wrap gap-3">
                     {sizes.map((size) => (
-                      <button
-                        key={size}
-                        onClick={() => handleSizeChange(size ?? '')}
-                        className={`px-4 py-2 rounded-md border-2 transition-all duration-200 ${
-                          selectedSize === size
-                            ? 'border-primary bg-primary text-white'
-                            : 'border-gray-200 hover:border-primary'
-                        }`}
+                      <Button key={size} onClick={() => handleSizeChange(size ?? '')}
+                        variant={selectedSize === size ? "default" : "outline" }
                       >
                         {size}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </div>
@@ -152,28 +146,21 @@ const ProductPage = (props: { product: Product }) => {
 
               {/* Color Selection */}
               {colors.length > 0 && (
-                <div className="space-y-4">
+                <div className="space-y-2 lg:space-y-4">
                   <label className="block text-sm font-medium text-gray-700">Color</label>
                   <div className="flex flex-wrap gap-3">
                     {colors.map((color) => (
-                      <button
-                        key={color}
-                        onClick={() => handleColorChange(color ?? '')}
-                        className={`px-4 py-2 rounded-md border-2 transition-all duration-200 ${
-                          selectedColor === color
-                            ? 'border-primary bg-primary text-white'
-                            : 'border-gray-200 hover:border-primary'
-                        }`}
-                      >
+                      <Button key={color} onClick={() => handleColorChange(color ?? '')}
+                        variant={selectedColor === color? "default" : "outline"} >
                         {color}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </div>
               )}
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-2 lg:space-y-4">
               <label className="block text-sm font-medium text-gray-700">Quantity</label>
               <div className="flex items-center space-x-4">
                 <Button
@@ -193,7 +180,9 @@ const ProductPage = (props: { product: Product }) => {
                 </Button>
               </div>
             </div>
+            <div className="py-3">
             <AddToCart product={product} selectedVariantId={selectedVariant?.id || ''} />
+            </div>
           </div>
         </div>
       </div>

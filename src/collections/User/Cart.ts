@@ -2,6 +2,7 @@ import { Access } from "payload";
 import { CollectionConfig } from "payload";
 
 const isOwnerOrAdminOrNoUser: Access = ({ req, data }) => {
+  if(data?.cartStatus === "checkedOut") return false;
   if(!(data?.user)) return true;
   if(req.user?.role === "admin") return true;
   if(req.user?.id === data.user?.id) return true;
@@ -25,6 +26,20 @@ export const UsersCart: CollectionConfig = {
       relationTo: "users",
       required: false,
       hasMany: false,
+    },
+    {
+      name: "cartStatus",
+      type: "select",
+      options: [
+        {
+          label: "Awaiting Checkout",
+          value: "awaitingCheckout"
+        },
+        {
+          label: "Checked Out",
+          value: "checkedOut"
+        }
+      ],
     },
     {
       name: "items",
@@ -68,26 +83,26 @@ export const UsersCart: CollectionConfig = {
 
   hooks: {
     beforeChange: [
-      async ({ data }) => {
-        // Calculate subTotal for each item
-        data.items = data.items?.map((item: any) => {
+      async ({ data, operation }) => {
+        if (operation === "create" || operation === "update") {
+          // Calculate subTotal for each item
+          data.items = data.items?.map((item: any) => {
           const variant = item.product?.variants?.find(
             (v: any) => v.id === item.variantId
           );
-          const price = variant?.price || item.product?.price || 0;
+          const price = variant?.price || item.product?.price
           return {
             ...item,
             subTotal: price * (item.quantity || 1),
           };
         });
-
         // Calculate total
         data.total = data.items?.reduce(
-          (sum: number, item: any) => sum + (item.subTotal ?? 0),
+          (sum: number, item: any) => sum + item.subTotal!,
           0
         );
-
-        return data;
+      }
+      return data;
       },
     ],
   },
