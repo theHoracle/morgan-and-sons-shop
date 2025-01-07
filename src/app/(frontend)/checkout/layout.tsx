@@ -10,8 +10,8 @@ export default function Layout ({
     children: React.ReactNode
 }>) {
     return <main>
-        <header className="flex flex-col items-center w-screen px-4 h-16 border-b shadow-sm">
-                <div className="flex items-center justify-between max-w-4xl h-full w-full">
+        <header className="flex flex-col items-center w-screen h-16 border-b shadow-sm px-4 md:px-8 lg:px-20">
+                <div className="flex items-center justify-between ">
                     <h1 className="text-2xl font-extrabold leading-tight tracking-tight">M&S</h1>
                     <div className="flex items-center gap-2">
                         <Link href="/contact"
@@ -26,6 +26,8 @@ export default function Layout ({
                     </div>
                 </div>
             </header>
+            <div className="container mx-auto px-4  md:px-8 lg:px-20">
         {children}
+            </div>
     </main>
 }

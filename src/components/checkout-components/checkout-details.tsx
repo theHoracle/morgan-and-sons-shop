@@ -54,13 +54,14 @@ export function CheckoutDetails(props: {
                                 <p>{selectedDeliveryDetails.phoneNumber}</p>
                             </div>
                         ) :  (
-                            <div className="flex flex-col space-y-2 rounded-lg p-4 border-2 border-stone-300">
+                            <div className="flex flex-col space-y-2 rounded-lg p-4 border-2 w-full border-stone-300">
                                 <p>No address selected</p>
                             </div>
                         )} 
                         <div>
                             <DeliveryDetailsForm userId={props.user?.id}
                                 userDeliveryDetails={userDeliveryDetails}
+                                paymentMethod={paymentMethod}
                                 setSelectedDeliveryDetails={setSelectedDeliveryDetails}
                             />
                         </div>
@@ -137,6 +138,7 @@ export function CheckoutDetails(props: {
 const DeliveryDetailsForm = (props: {
     userId: User["id"] | undefined,
     userDeliveryDetails: User["deliveryDetails"],
+    paymentMethod: string | null
     setSelectedDeliveryDetails: (details: NonNullable<User["deliveryDetails"]>[0]) => void
 }) => {
     const [openForm, setOpenForm] = useState(false);
@@ -150,6 +152,8 @@ const DeliveryDetailsForm = (props: {
         },
       });
     
+    const deliveryDetail = (props.userDeliveryDetails && props.userDeliveryDetails[0]) ? props.userDeliveryDetails[0] : null
+
     const isMobile = useIsMobile()
     if(isMobile) {
         setOpenForm(true)
@@ -157,6 +161,10 @@ const DeliveryDetailsForm = (props: {
 
     
     const submitForm = async (values: z.infer<typeof formSchema>) => {
+        if(!props.paymentMethod) {
+            toast.error("Select a Payment method");
+            return;
+        }
         const res = await addDeliveryDetails(((props.userId ?? "")), {...values});
         if(res.success) {
             toast.success("Address added successfully");
@@ -172,13 +180,13 @@ const DeliveryDetailsForm = (props: {
     <DialogTrigger>
         <Button>Edit delivery detail</Button>
     </DialogTrigger>
-    <DialogContent className="h-3/4 overflow-y-scroll ">
+    <DialogContent className="h-3/4 overflow-y-scroll">
         <DialogHeader>
             <DialogTitle>Select an address</DialogTitle>
         </DialogHeader>
-        <div className="grid md:grid-cols-2 gap-2 lg:gap-4">
-        {props.userDeliveryDetails && <div>
-                <RadioGroup defaultValue={props.userDeliveryDetails[0].address ?? ""} 
+        <div className={`grid md:grid-cols-${deliveryDetail ? 1 : 2} gap-2 lg:gap-4`}>
+        {deliveryDetail && <div>
+                <RadioGroup defaultValue={deliveryDetail.address ?? ""} 
                     onChange={(e) => {
                         const selected = props.userDeliveryDetails?.find(d => d.address === (e.target as HTMLInputElement).value);
                         if(selected) {
