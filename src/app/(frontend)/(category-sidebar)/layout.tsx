@@ -1,14 +1,7 @@
 import AuthLinkWithRedirect from "@/components/auth/add-redirect-link";
+import BreadCrumb from "@/components/BreadCrumb";
 import Cart from "@/components/cart/cart";
 import { AppSidebar } from "@/components/sidebar/app-sidebar"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
 import {
   SidebarInset,
@@ -38,24 +31,12 @@ export default async function Layout({
               <div className="flex items-center gap-2">  
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
-            <Breadcrumb>
-                <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink href="#">
-                      Category
-                    </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                    <BreadcrumbPage>Product</BreadcrumbPage>
-                </BreadcrumbItem>
-                </BreadcrumbList>
-            </Breadcrumb>
+            <BreadCrumb />
             </div>
             <div className="flex items-center gap-2">
             {/*  */}
             {user ? (
-              <div className="flex flex-col items-center justify-center border border-stone-900 bg-foreground rounded-full p-1">
+              <div className="flex flex-col items-center justify-center border border-stone-900 bg-stone-100 text-stone-900 rounded-full p-1">
               <span className="uppercase font-bold tracking-tight text-xl" >
                 {user.email.substring(0, 2)}
                 </span>

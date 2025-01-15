@@ -15,7 +15,7 @@ export async function loginUser({
         },
     })
     if(token && user.id) {
-        await Promise.all([
+        await Promise.allSettled([
             mergeUsersCart({ userId: user.id }),
             setJWTSession(token),
         ])

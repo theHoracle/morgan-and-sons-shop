@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import Image from 'next/image'
 import { Minus, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -7,6 +7,7 @@ import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carouse
 import { Media, Product } from '@/payload-types'
 import { AddToCart } from '@/components/cart/add-to-cart'
 import { formatNairaPrice } from '@/lib/helpers'
+import { Input } from './ui/input'
 
 const ProductPage = (props: { product: Product }) => {
   const { product } = props
@@ -40,9 +41,15 @@ const ProductPage = (props: { product: Product }) => {
     updateSelectedVariant(selectedSize, color)
   }
 
+  const handleChangeQuantity = (e: ChangeEvent<HTMLInputElement>) => {
+    const getOnlyNums = e.target.value.replace(/[^0-9]/g, '')
+    if(!getOnlyNums) return;
+    setQuantity(parseInt(getOnlyNums))
+  }
+
   return (
     <div className="container mx-auto bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="max-w-7xl mx-auto md:h-[calc(100lvh - 80px)]">
+      <div className="max-w-7xl mx-auto md:h-[calc(100lvh - 80px)] px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
           {/* Image Gallery */}
           <div className="space-y-4">
@@ -160,7 +167,7 @@ const ProductPage = (props: { product: Product }) => {
               )}
             </div>
 
-            <div className="space-y-2 lg:space-y-4">
+            <div className="space-y-2 lg:space-y-4 py-4 md:py-0">
               <label className="block text-sm font-medium text-gray-700">Quantity</label>
               <div className="flex items-center space-x-4">
                 <Button
@@ -170,7 +177,10 @@ const ProductPage = (props: { product: Product }) => {
                 >
                   <Minus className="h-4 w-4" />
                 </Button>
-                <span className="text-xl font-semibold">{quantity}</span>
+                <Input value={quantity} type='text'
+                  className="text-xl font-semibold text-center w-14"
+                  onChange={handleChangeQuantity} />
+                {/* <span >{quantity}</span> */}
                 <Button
                   variant="outline"
                   size="icon"
@@ -181,7 +191,10 @@ const ProductPage = (props: { product: Product }) => {
               </div>
             </div>
             <div className="py-3">
-            <AddToCart product={product} selectedVariantId={selectedVariant?.id || ''} />
+            <AddToCart product={product} 
+              selectedVariantId={selectedVariant?.id || ''}
+              quantity={quantity}
+            />
             </div>
           </div>
         </div>

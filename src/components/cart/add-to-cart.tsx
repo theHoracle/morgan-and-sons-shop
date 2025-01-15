@@ -3,15 +3,15 @@ import { useAddItem } from "@/hooks/cart";
 import { Product } from "@/payload-types";
 import clsx from "clsx";
 import { PlusIcon } from "lucide-react";
-import { useActionState } from "react";
-import { addItem } from "./action";
 
 function SubmitButton({
     availableForSale,
-    selectedVariantId
+    selectedVariantId,
+    quantity
   }: {
     availableForSale: boolean;
     selectedVariantId: string | undefined;
+    quantity: number;
   }) {
     const buttonClasses =
       'relative flex w-full items-center justify-center rounded-full bg-blue-600 p-4 tracking-wide text-white';
@@ -26,7 +26,7 @@ function SubmitButton({
     }
   
     console.log(selectedVariantId);
-    if (!selectedVariantId) {
+    if (!selectedVariantId || !quantity || quantity < 1) {
       return (
         <button
           aria-label="Please select an option"
@@ -57,21 +57,23 @@ function SubmitButton({
     );    
   }
 
-export function AddToCart({ product, selectedVariantId }: { product: Product, selectedVariantId: string }) {
+export function AddToCart({ product, selectedVariantId, quantity }: { product: Product, selectedVariantId: string, quantity: number }) {
     const { variantInventory } = product;
     const { mutate: addCartItem } = useAddItem();
     const availableForSale = variantInventory?.some((variant) => variant.inventoryQuantity ? variant.inventoryQuantity > 0 : false) || false;
     
     const handleSubmit = (event: React.FormEvent) => {
       event.preventDefault();
-      addCartItem({selectedVariantId, product}); 
+      addCartItem({selectedVariantId, product, quantity}); 
     };
   
     return (
       <form 
       onSubmit={handleSubmit}>
         <SubmitButton availableForSale={availableForSale}
-         selectedVariantId={selectedVariantId} />
+         selectedVariantId={selectedVariantId}
+         quantity={quantity}
+         />
       </form>
     );
   }

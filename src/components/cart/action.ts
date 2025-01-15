@@ -1,13 +1,18 @@
 "use server";
 
-import { getServerSideUser } from "@/lib/session";
 import { payload } from "@/payload";
-import { Product, User, UsersCart } from "@/payload-types";
-import { cookies } from "next/headers";
+import { Product, UsersCart } from "@/payload-types";
+import { cookies, headers as nextHeaders } from "next/headers";
+
 
 type CartItem = NonNullable<UsersCart["items"]>[0];
 const COOKIE_CART_KEY = "USER_CART_ID";
 
+const getUser = async () => {
+    const headers = await nextHeaders()
+    const { user } = await payload.auth({headers})
+    return user
+}
 
 // -- Cookie Handling
 export const getCookieCart = async () => {
@@ -31,7 +36,7 @@ const getCartById = async (cartId: string) => (
 // -- Fetch Cart or Create New Cart
 export const getCart = async () => {
     const nextCookies = await cookies();
-    const { user } = await getServerSideUser(nextCookies)
+    const user = await getUser()
     // if no user, check for cookie cart. If no cookie cart, create a new cart
     if (!user) {
         const cartId = await getCookieCart()
@@ -89,14 +94,14 @@ export const addItem = async ({
         );
         if (!selectedVariant?.id) return null;
 
-
         if (existingItemIndex > -1) {
             updatedItems = existingItems.map((item, index) => {
                 if (index === existingItemIndex) {
-                    const updatedQuantity = (item.quantity || 0) + quantity;
+                    const updatedQuantity = item.quantity + quantity;
                     return { 
                         ...item, 
-                        quantity: updatedQuantity
+                        quantity: updatedQuantity,
+                        subTotal: (selectedVariant?.price ?? product.price) *  (item.quantity + quantity),
                      };
                 }
                 return item;
@@ -148,7 +153,7 @@ export const removeItem = async ({
             updatedItems = existingItems.flatMap((cartItem) => {
                 const singlePrice = (cartItem.subTotal ?? 0) / cartItem.quantity;
                    if (cartItem.id === itemId) {
-                    const updatedQuantity = (cartItem.quantity || 1) - 1;
+                    const updatedQuantity = cartItem.quantity - 1;
                     if (updatedQuantity <= 0) return [];
                     return [
                         {
@@ -195,7 +200,7 @@ export const mergeUsersCart = async ({ userId }: {userId: number}) => {
     if(!cookieCartId) return;
 
     // get carts
-    const [ guestCart, { docs: usersCart } ] = await Promise.all([
+    const [ guestCart, {docs: usersCart} ] = await Promise.all([
         getCartById(cookieCartId),
         payload.find({ collection: "users-cart", 
                 where: { 
@@ -213,7 +218,7 @@ export const mergeUsersCart = async ({ userId }: {userId: number}) => {
                 total: guestCart.total
             }
         })
-        return await Promise.all([
+        return await Promise.allSettled([
             setCookieCart(cart.id),
             payload.delete({ collection: "users-cart", id: guestCart.id }),
         ]);
@@ -233,7 +238,7 @@ export const mergeUsersCart = async ({ userId }: {userId: number}) => {
         }
     })
     
-    return await Promise.all([
+    return await Promise.allSettled([
         setCookieCart(userCart.id),
         payload.update({ collection: "users-cart", id: userCart.id, data: { items: updatedItems } }),
         payload.delete({ collection: "users-cart", id: guestCart.id }),
