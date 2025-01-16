@@ -36,8 +36,8 @@ export default async function Layout({
             <div className="flex items-center gap-2">
             {/*  */}
             {user ? (
-              <div className="flex flex-col items-center justify-center border border-stone-900 bg-stone-100 text-stone-900 rounded-full p-1">
-              <span className="uppercase font-bold tracking-tight text-xl" >
+              <div className="flex flex-col aspect-square items-center justify-center border border-stone-900 bg-stone-100 text-stone-900 rounded-full px-1 py-0.5">
+              <span className="uppercase font-semibold tracking-tight " >
                 {user.email.substring(0, 2)}
                 </span>
               </div>) : (

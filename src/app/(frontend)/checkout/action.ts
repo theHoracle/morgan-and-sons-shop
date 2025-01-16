@@ -4,12 +4,24 @@ import { payload } from "@/payload";
 import { User } from "@/payload-types";
 import { paystack } from "@/paystack";
 import { v4 as uuidv4 } from 'uuid';
+import { cookies as nextCookies } from "next/headers"
+import { getServerSideUser } from "@/lib/session";
 
 type CreatePaymentSessionResponse = { success: true; sessionUrl: string } | { success: false; error: string }
 type CreatePaymentSessionParams = {
     unitAmount: number,
     cartId: string | number,
     deliveryDetail: NonNullable<User["deliveryDetails"]>[0],
+}
+
+export const getUserInfo = async () => {
+    const cookies = await nextCookies()
+    const { user } = await getServerSideUser(cookies)
+    if(!user) return;
+    return {
+        userId: user.id,
+        deliveryDetails: user.deliveryDetails,
+    }
 }
 
 export const createPaymentSession = async ({
@@ -81,17 +93,28 @@ export const createPaymentSession = async ({
     }
 }
 
-export const addDeliveryDetails = async (userId: string | number, details: { fullName: string, phoneNumber: string, address: string }) => {
+export const addDeliveryDetails = async ({
+   userId,
+   newDeliveryDetail 
+}: {
+    userId: number | string,
+    newDeliveryDetail: {fullName: string, phoneNumber: string, address: string}
+
+}) => {
     const user = await payload.findByID({ collection: 'users', id: userId })
     if(!user) return { success: false, error: 'User not found' }
     if(!user.deliveryDetails) {
         user.deliveryDetails = []
     }
-    user.deliveryDetails.push(details)
+    user.deliveryDetails.push(newDeliveryDetail)
     await payload.update({
         collection: 'users',
         id: userId,
-        data: user
+        data: {
+            ...user,
+            deliveryDetails: user.deliveryDetails
+        }
     })
     return { success: true }
 }
+

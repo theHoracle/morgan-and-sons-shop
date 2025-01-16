@@ -1,18 +1,13 @@
 "use server";
 
+import { getServerSideUser } from "@/lib/session";
 import { payload } from "@/payload";
 import { Product, UsersCart } from "@/payload-types";
-import { cookies, headers as nextHeaders } from "next/headers";
+import { cookies } from "next/headers";
 
 
 type CartItem = NonNullable<UsersCart["items"]>[0];
 const COOKIE_CART_KEY = "USER_CART_ID";
-
-const getUser = async () => {
-    const headers = await nextHeaders()
-    const { user } = await payload.auth({headers})
-    return user
-}
 
 // -- Cookie Handling
 export const getCookieCart = async () => {
@@ -36,7 +31,8 @@ const getCartById = async (cartId: string) => (
 // -- Fetch Cart or Create New Cart
 export const getCart = async () => {
     const nextCookies = await cookies();
-    const user = await getUser()
+    const { user } = await getServerSideUser(nextCookies)
+    console.log("IS it actually user: ", user)
     // if no user, check for cookie cart. If no cookie cart, create a new cart
     if (!user) {
         const cartId = await getCookieCart()
