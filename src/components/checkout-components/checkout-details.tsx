@@ -10,18 +10,18 @@ import DeliveryDetailsForm from "./DeliveryDetailsForm";
 import { User } from "@/payload-types";
 
 export function CheckoutDetails() {
+    type DeliveryDetailT = NonNullable<User["deliveryDetails"]>[0]
     const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
+    const [selectedDeliveryDetails, setSelectedDeliveryDetails] = useState<DeliveryDetailT | undefined>();
     const { data } = useGetUser()
     const userId = data?.userId
     const deliveryDetails = data?.deliveryDetails
-    type DeliveryDetailT = NonNullable<User["deliveryDetails"]>[0]
-    const [selectedDeliveryDetails, setSelectedDeliveryDetails] = useState<DeliveryDetailT | undefined>();
 
     useEffect(() => {
         if(deliveryDetails && !selectedDeliveryDetails) {
             setSelectedDeliveryDetails(deliveryDetails[0])
         }
-    }, [])
+    }, [deliveryDetails, selectedDeliveryDetails])
     console.log("Selected: ", selectedDeliveryDetails)
 
     const onPaymentMethodChange = (e: React.ChangeEvent<HTMLInputElement>) => {
