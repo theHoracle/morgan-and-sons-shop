@@ -2,34 +2,27 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { OrderSummary } from "./order-summary"
-import { z } from "zod";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { CheckIcon, ChevronDown, ChevronUp } from "lucide-react";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
-import { Button } from "../ui/button";
-import { useState } from "react";
-import { toast } from "sonner";
-import { Input } from "../ui/input";
+import { CheckIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useGetUser } from "./checkout-hooks";
+import DeliveryDetailsForm from "./DeliveryDetailsForm";
 import { User } from "@/payload-types";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { useGetUser, useUpdateInfo } from "./checkout-hooks";
-import { redirect } from "next/navigation";
-
-const formSchema = z.object({
-    address: z.string().min(8, "Address is too short"),
-    phoneNumber: z.string().min(11, "Phone number is too short"),
-    fullName: z.string().min(3, "Name is too short"),
-})
 
 export function CheckoutDetails() {
     const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
     const { data } = useGetUser()
-    if(!data) redirect("/");
-    const { deliveryDetails, userId } = data
-    const [selectedDeliveryDetails, setSelectedDeliveryDetails] = useState(deliveryDetails ? deliveryDetails[0] : null);
+    const userId = data?.userId
+    const deliveryDetails = data?.deliveryDetails
+    type DeliveryDetailT = NonNullable<User["deliveryDetails"]>[0]
+    const [selectedDeliveryDetails, setSelectedDeliveryDetails] = useState<DeliveryDetailT | undefined>();
+
+    useEffect(() => {
+        if(deliveryDetails && !selectedDeliveryDetails) {
+            setSelectedDeliveryDetails(deliveryDetails[0])
+        }
+    }, [])
+    console.log("Selected: ", selectedDeliveryDetails)
 
     const onPaymentMethodChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPaymentMethod(e.target.value);
@@ -57,12 +50,11 @@ export function CheckoutDetails() {
                                 <p>No address selected</p>
                             </div>
                         )} 
-                        <div>
-                            <DeliveryDetailsForm userId={userId}
+                         <DeliveryDetailsForm userId={userId}
                                 userDeliveryDetails={deliveryDetails}
+                                selectedDeliveryDetail={selectedDeliveryDetails}
                                 setSelectedDeliveryDetails={setSelectedDeliveryDetails}
-                            />
-                        </div>
+                         />
                     </CardContent>
                 </Card>
 
@@ -129,151 +121,5 @@ export function CheckoutDetails() {
                <OrderSummary deliveryDetail={selectedDeliveryDetails} />    
             </div>
             </div>
-    )
-}
-
-
-const DeliveryDetailsForm = (props: {
-    userId: User["id"] | undefined,
-    userDeliveryDetails: User["deliveryDetails"],
-    setSelectedDeliveryDetails: (details: NonNullable<User["deliveryDetails"]>[0]) => void
-}) => {
-    const { setSelectedDeliveryDetails, userDeliveryDetails, userId } = props
-    const isMobile = useIsMobile()
-    const [openForm, setOpenForm] = useState(isMobile ? true : false);
-    const { mutate: addDeliveryDetail } = useUpdateInfo()
-    const form  = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-            defaultValues: {
-                address: "",
-                phoneNumber: "",
-                fullName: "",
-        },
-      });
-
-    
-    
-    const submitForm = (values: z.infer<typeof formSchema>) => {
-        addDeliveryDetail({
-            userId: userId!,
-            newDeliveryDetail: values,
-        })
-        form.reset()
-        setOpenForm(false)
-        if(userDeliveryDetails) {
-            setSelectedDeliveryDetails(userDeliveryDetails[userDeliveryDetails.length - 1]) // setSelectedDeliveryDetails(values)
-        }
-    }
-
-    return (
-        <Dialog>
-            <DialogTrigger asChild>
-                <Button>Edit delivery detail</Button>
-            </DialogTrigger>
-            <DialogContent className="h-3/4 overflow-y-scroll flex flex-col">
-                <DialogHeader>
-                    <DialogTitle>Delivery address</DialogTitle>
-                </DialogHeader>
-                <div className={`grid lg:grid-cols-2 gap-2 lg:gap-4`}>
-                    {userDeliveryDetails ? <div>
-                        <RadioGroup defaultValue={userDeliveryDetails[0]?.address ?? ""} 
-                            onChange={(e) => {
-                                const selected = userDeliveryDetails?.find(d => d.address === (e.target as HTMLInputElement).value);
-                                if(selected) {
-                                    setSelectedDeliveryDetails(selected);
-                                }
-                            }}
-                            name="deliveryDetails"
-                            >
-                            <div className="flex flex-col space-y-4 w-full">
-                                {userDeliveryDetails?.map((detail) => (
-                                    <div key={detail.address} className="flex items-center gap-4 border-2 border-stone-300 p-4 rounded-lg">
-                                        <RadioGroupItem id={ detail.address ?? "" } value={ detail.address ?? "" } />
-                                        <label htmlFor={ detail.address ?? "" } className="flex flex-col items-start">
-                                            <h4 className="font-semibold text-lg tracking-tight leading-tight">
-                                                {detail.fullName}
-                                            </h4>
-                                            <p>{detail.address}</p>
-                                            <p>{detail.phoneNumber}</p>
-                                        </label>
-                                    </div>
-                                ))}
-                            </div>
-                        </RadioGroup>
-                    </div> : <div className="text-center w-full py-8 border border-dashed rounded-lg border-stone-300">
-                        NO PREVIOUS DELIVERY DETAIL
-                    </div>
-                    }
-                    <div className="relative">
-                        <div className="w-full absolute inset-x-0 h-14 top-0 rounded-md bg-black text-white px-4 py-2 flex items-center justify-between cursor-pointer transition-all"
-                        onClick={() => setOpenForm(!openForm)}
-                        >
-                            Add new delivery detail
-                            {openForm ? (
-                                <ChevronDown className="size-5 " />
-                            ) : (
-                                <ChevronUp className="size-5 " />
-                            )}
-                        </div>
-                        {openForm &&
-                        <Form {...form}>
-                            <form onSubmit={form.handleSubmit(submitForm)}
-                            className="flex flex-col space-y-4 px-4 pt-4 mt-14 pb-10 bg-stone-200 rounded-bl-lg rounded-br-lg">
-                                <FormField
-                                control={form.control}
-                                name="fullName"
-                                render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>Full Name</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Jon Doe" {...field} />
-                                    </FormControl>
-                                    <FormDescription className="sr-only" >
-                                        Enter your Name
-                                    </FormDescription>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="phoneNumber"
-                                render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>Phone Number</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="08012345678" {...field} />
-                                    </FormControl>
-                                    <FormDescription className="sr-only" >
-                                        Enter your email
-                                    </FormDescription>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                                />
-                                <FormField
-                                control={form.control}
-                                name="address"
-                                render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>Address</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="123, Main Street" {...field} />
-                                    </FormControl>
-                                    <FormDescription className="sr-only" >
-                                        Enter your Address
-                                    </FormDescription>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                                />
-                                <Button type="submit">Add Details</Button>
-                            </form>
-                        </Form>
-                        }
-                    </div>
-                </div>
-            </DialogContent>
-        </Dialog>
     )
 }

@@ -15,12 +15,24 @@ export  function useUpdateInfo() {
         onMutate: async ({ newDeliveryDetail }) => {
             await queryClient.cancelQueries({ queryKey: ["current-user"] })
 
-            const userDetail: CurrentUserT = queryClient.getQueryData(["current-user"])
+            const userDetail = queryClient.getQueryData<CurrentUserT>(["current-user"])
+            if (!userDetail) {
+                return;
+            }
             queryClient.setQueryData(["current-user"], {
                 ...userDetail,
                 deliveryDetails: userDetail?.deliveryDetails?.push(newDeliveryDetail)
             })
-        }
+            return { userDetail }
+        },
+        onError: (err, variables, context) => {
+            if (context?.userDetail) {
+              queryClient.setQueryData(['cart'], context.userDetail);
+            }
+          },
+          onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['cart'] });
+          },
     })
 }
 
@@ -32,4 +44,4 @@ type CurrentUserT = {
         address?: string | null;
         id?: string | null;
     }[] | null | undefined;
-} | undefined
+}

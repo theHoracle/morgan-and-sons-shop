@@ -6,6 +6,7 @@ import { paystack } from "@/paystack";
 import { v4 as uuidv4 } from 'uuid';
 import { cookies as nextCookies } from "next/headers"
 import { getServerSideUser } from "@/lib/session";
+import { redirect } from "next/navigation";
 
 type CreatePaymentSessionResponse = { success: true; sessionUrl: string } | { success: false; error: string }
 type CreatePaymentSessionParams = {
@@ -17,7 +18,7 @@ type CreatePaymentSessionParams = {
 export const getUserInfo = async () => {
     const cookies = await nextCookies()
     const { user } = await getServerSideUser(cookies)
-    if(!user) return;
+    if(!user) redirect("/");
     return {
         userId: user.id,
         deliveryDetails: user.deliveryDetails,

@@ -10,7 +10,7 @@ import { useState } from "react";
 
 
 export function OrderSummary(props: {
-    deliveryDetail: NonNullable<User["deliveryDetails"]>[0] | null,
+    deliveryDetail: NonNullable<User["deliveryDetails"]>[0] | undefined,
 }) {
     const PROCESSING_FEE = 1000;
     const { data: cart } = useGetCart();
