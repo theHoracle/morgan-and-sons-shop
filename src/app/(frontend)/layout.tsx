@@ -1,10 +1,8 @@
 import type { Metadata } from 'next';
 import "./globals.css"
-import {
-  SidebarProvider,
-} from "@/components/ui/sidebar"
 import { Geist } from 'next/font/google'
 import ClientProviders from '@/components/providers/ClientProviders';
+import { Toaster } from '@/components/ui/sonner';
 
 const { NEXT_PUBLIC_URL } = process.env
 export const metadata: Metadata = {
@@ -33,6 +31,7 @@ export default function RootLayout({
             <ClientProviders>
               {children}
             </ClientProviders>
+            <Toaster />
         </body>
         </html>
     )

@@ -12,18 +12,14 @@ import { User } from "@/payload-types";
 export function CheckoutDetails() {
     type DeliveryDetailT = NonNullable<User["deliveryDetails"]>[0]
     const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
-    const [selectedDeliveryDetails, setSelectedDeliveryDetails] = useState<DeliveryDetailT | undefined>();
     const { data } = useGetUser()
     const userId = data?.userId
     const deliveryDetails = data?.deliveryDetails
+    const [selectedDeliveryDetailId, setSelectedDeliveryDetailId] = useState<string | undefined>(deliveryDetails && deliveryDetails[0].id 
+                    ? deliveryDetails[0].id 
+                    : "");
 
-    useEffect(() => {
-        if(deliveryDetails && !selectedDeliveryDetails) {
-            setSelectedDeliveryDetails(deliveryDetails[0])
-        }
-    }, [deliveryDetails, selectedDeliveryDetails])
-    console.log("Selected: ", selectedDeliveryDetails)
-
+    const selectedDeliveryDetail = deliveryDetails?.find(item => item.id === selectedDeliveryDetailId)
     const onPaymentMethodChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPaymentMethod(e.target.value);
     }
@@ -37,13 +33,13 @@ export function CheckoutDetails() {
                         <CardTitle>Shipping Address</CardTitle>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-2 items-end">
-                        {selectedDeliveryDetails ? (
+                        {selectedDeliveryDetail ? (
                             <div className="flex flex-col space-y-2 w-full rounded-lg p-4 border-2 border-stone-300">
                                 <h3 className="font-semibold text-lg tracking-tight leading-tight">
-                                    {selectedDeliveryDetails.fullName}
+                                    {selectedDeliveryDetail.fullName}
                                 </h3>
-                                <p>{selectedDeliveryDetails.address}</p>
-                                <p>{selectedDeliveryDetails.phoneNumber}</p>
+                                <p>{selectedDeliveryDetail.address}</p>
+                                <p>{selectedDeliveryDetail.phoneNumber}</p>
                             </div>
                         ) :  (
                             <div className="flex flex-col space-y-2 rounded-lg p-4 border-2 w-full border-stone-300">
@@ -52,8 +48,8 @@ export function CheckoutDetails() {
                         )} 
                          <DeliveryDetailsForm userId={userId}
                                 userDeliveryDetails={deliveryDetails}
-                                selectedDeliveryDetail={selectedDeliveryDetails}
-                                setSelectedDeliveryDetails={setSelectedDeliveryDetails}
+                                selectedDeliveryDetailId={selectedDeliveryDetailId}
+                                setSelectedDeliveryDetailId={setSelectedDeliveryDetailId}
                          />
                     </CardContent>
                 </Card>
@@ -118,7 +114,7 @@ export function CheckoutDetails() {
             </div>
             </div>
             <div className="col-span-1 w-full"> 
-               <OrderSummary deliveryDetail={selectedDeliveryDetails} />    
+               <OrderSummary deliveryDetail={selectedDeliveryDetail} />    
             </div>
             </div>
     )

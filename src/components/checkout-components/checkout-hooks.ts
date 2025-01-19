@@ -16,13 +16,12 @@ export  function useUpdateInfo() {
             await queryClient.cancelQueries({ queryKey: ["current-user"] })
 
             const userDetail = queryClient.getQueryData<CurrentUserT>(["current-user"])
-            if (!userDetail) {
-                return;
-            }
-            queryClient.setQueryData(["current-user"], {
+            if(userDetail) {
+                queryClient.setQueryData(["current-user"], {
                 ...userDetail,
                 deliveryDetails: userDetail?.deliveryDetails?.push(newDeliveryDetail)
             })
+            }
             return { userDetail }
         },
         onError: (err, variables, context) => {

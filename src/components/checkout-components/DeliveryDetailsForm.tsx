@@ -4,7 +4,7 @@ import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogHeader } from 
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { User } from "@/payload-types";
-import { useState } from "react";
+import { MouseEvent, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../ui/button";
@@ -21,14 +21,14 @@ const formSchema = z.object({
 const DeliveryDetailsForm = (props: {
     userId: User["id"] | undefined,
     userDeliveryDetails: User["deliveryDetails"],
-    selectedDeliveryDetail: NonNullable<User["deliveryDetails"]>[0] | undefined,
-    setSelectedDeliveryDetails: (details: NonNullable<User["deliveryDetails"]>[0]) => void
+    selectedDeliveryDetailId: string | undefined,
+    setSelectedDeliveryDetailId: (detailid: string) => void
 }) => {
-    const { setSelectedDeliveryDetails, selectedDeliveryDetail, userDeliveryDetails, userId } = props
+    const { setSelectedDeliveryDetailId, selectedDeliveryDetailId, userDeliveryDetails, userId } = props
     const { mutate: addDeliveryDetail } = useUpdateInfo();
     const isMobile = useIsMobile();
     const [openForm, setOpenForm] = useState(isMobile ? true : false);
-    
+    const [radioValue, setRadioValue] = useState(selectedDeliveryDetailId ? selectedDeliveryDetailId : "")
     const form  = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
             defaultValues: {
@@ -38,7 +38,10 @@ const DeliveryDetailsForm = (props: {
         },
       });
 
-    
+    const changeSelection = (e: MouseEvent<HTMLButtonElement>) => {
+        setRadioValue(e.currentTarget.id)
+        setSelectedDeliveryDetailId(e.currentTarget.id)
+    }
     
     const submitForm = (values: z.infer<typeof formSchema>) => {
         addDeliveryDetail({
@@ -46,10 +49,7 @@ const DeliveryDetailsForm = (props: {
             newDeliveryDetail: values,
         })
         form.reset()
-        setOpenForm(false)
-        if(userDeliveryDetails) {
-            setSelectedDeliveryDetails(userDeliveryDetails[userDeliveryDetails.length - 1]) // setSelectedDeliveryDetails(values)
-        }
+        setOpenForm(false);
     }
 
     return (
@@ -64,19 +64,14 @@ const DeliveryDetailsForm = (props: {
                 </DialogHeader>
                 <div className={`grid lg:grid-cols-2 gap-2 lg:gap-4`}>
                     {userDeliveryDetails ? <div>
-                        <RadioGroup defaultValue={selectedDeliveryDetail ? selectedDeliveryDetail.id! : ""} 
-                            onChange={(e) => {
-                                const selected = userDeliveryDetails?.find(item => item.id === (e.target as HTMLInputElement).value);
-                                if(selected) {
-                                    setSelectedDeliveryDetails(selected);
-                                }
-                            }}
-                            name="deliveryDetails"
-                            >
+                        <RadioGroup     
+                          name="deliveryDetails"
+                          value={radioValue}
+                        >
                             <div className="flex flex-col space-y-4 w-full">
-                                {userDeliveryDetails?.map((detail) => (
-                                    <div key={detail.id} className="flex items-center gap-4 border-2 border-stone-300 p-4 rounded-lg">
-                                        <RadioGroupItem id={detail.id!} value={detail.id!} />
+                                {userDeliveryDetails?.map((detail, idx) => (
+                                    <div key={idx} className="flex items-center gap-4 border-2 border-stone-300 p-4 rounded-lg">
+                                        <RadioGroupItem id={detail.id!} value={detail.id!} onClick={changeSelection} />
                                         <label htmlFor={ detail.id! } className="flex flex-col items-start">
                                             <h4 className="font-semibold text-lg tracking-tight leading-tight">
                                                 {detail.fullName}

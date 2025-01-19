@@ -114,7 +114,7 @@ export const addDeliveryDetails = async ({
         data: {
             ...user,
             deliveryDetails: user.deliveryDetails
-        }
+        },
     })
     return { success: true }
 }
