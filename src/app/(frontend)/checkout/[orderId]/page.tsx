@@ -19,7 +19,7 @@ const OrderSettlementPage = async ({ params }: {params: Promise<{orderId: string
     const cart = typeof order.order === "number" ? await payload.findByID({ collection: 'users-cart', id: order.order }) : order.order
     return (
         <div>
-        <h1 className="text-2xl font-bold tracking-tighter leading-tight mb-4">
+        <h1 className="text-2xl font-bold tracking-tighter leading-tight my-4">
             Order Confirmation
         </h1>
         <hr className='mt-1 w-full stroke-neutral-700' />
@@ -37,7 +37,7 @@ const OrderSettlementPage = async ({ params }: {params: Promise<{orderId: string
                     <p>Order Date</p>
                     <p>{new Date(order.createdAt).toDateString()}</p>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex flex-col justify-between">
                     <p>Order Summary</p>
                     <p>Order Total: {formatNairaPrice(order.orderTotal)}</p>
                     <ul>
